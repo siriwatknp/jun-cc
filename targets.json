@@ -23,8 +23,7 @@
       "commands": [
         "mui/triage-issue",
         "mui/summarize-pr",
-        "mui/collect-commits",
-        "me/request-change"
+        "mui/collect-commits"
       ]
     },
     "scrapee2": {
@@ -41,9 +40,7 @@
         "writing-responses-docs",
         "vercel-react-best-practices"
       ],
-      "commands": [
-        "me/request-change"
-      ]
+      "commands": []
     }
   }
 }

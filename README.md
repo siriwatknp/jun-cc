@@ -73,13 +73,11 @@ Run `./add-target.sh`, select the target to edit, deselect the skill/command, th
 
 ### Remove a skill/command from this repo
 
-Delete the skill directory or command file, then redistribute to clean stale items from all targets.
-
 ```sh
-rm -rf skills/old-skill
-rm commands/me/old-command.md
-./distribute.sh
+./remove-skill.sh
 ```
+
+Prompts to multi-select skills and commands to remove. Deletes sources, removes from all targets in `targets.json`, and redistributes automatically.
 
 ### Distribute
 
