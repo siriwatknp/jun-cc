@@ -4,30 +4,46 @@
       "path": "~/.claude",
       "method": "symlink",
       "skills": [
-        "agent-browser",
+        "using-mui-components",
+        "vercel-composition-patterns",
+        "vercel-react-native-skills",
+        "working-on-plans",
+        "writing-responses-docs",
+        "reviewing-base-ui-usage",
         "build-mui-demo",
+        "planning-research",
+        "supabase-postgres-best-practices",
         "build-mui-playground",
         "conducting-tech-analysis",
         "create-mui-sandbox",
-        "planning-research",
-        "using-mui-components",
-        "working-on-plans",
-        "writing-responses-docs"
+        "vercel-react-best-practices",
+        "web-design-guidelines",
+        "agent-browser"
       ],
       "commands": [
-        "me/request-change",
         "mui/triage-issue",
         "mui/summarize-pr",
-        "mui/collect-commits"
+        "mui/collect-commits",
+        "me/request-change"
       ]
     },
-    "base-ui-evals": {
-      "path": "~/Personal-Repos/base-ui-evals/.claude",
+    "scrapee2": {
+      "path": "~/Personal-Repos/scrapee2/.claude",
       "method": "copy",
       "skills": [
-        "reviewing-base-ui-usage"
+        "conducting-tech-analysis",
+        "planning-research",
+        "working-on-plans",
+        "agent-browser",
+        "using-mui-components",
+        "vercel-composition-patterns",
+        "web-design-guidelines",
+        "writing-responses-docs",
+        "vercel-react-best-practices"
       ],
-      "commands": []
+      "commands": [
+        "me/request-change"
+      ]
     }
   }
 }
