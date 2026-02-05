@@ -1,0 +1,1 @@
+- global or root claude code points to ~/.claude/ directory.

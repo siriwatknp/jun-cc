@@ -1,0 +1,33 @@
+{
+  "targets": {
+    "global": {
+      "path": "~/.claude",
+      "method": "symlink",
+      "skills": [
+        "agent-browser",
+        "build-mui-demo",
+        "build-mui-playground",
+        "conducting-tech-analysis",
+        "create-mui-sandbox",
+        "planning-research",
+        "using-mui-components",
+        "working-on-plans",
+        "writing-responses-docs"
+      ],
+      "commands": [
+        "me/request-change",
+        "mui/triage-issue",
+        "mui/summarize-pr",
+        "mui/collect-commits"
+      ]
+    },
+    "base-ui-evals": {
+      "path": "~/Personal-Repos/base-ui-evals/.claude",
+      "method": "copy",
+      "skills": [
+        "reviewing-base-ui-usage"
+      ],
+      "commands": []
+    }
+  }
+}
