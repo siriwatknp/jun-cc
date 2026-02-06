@@ -79,25 +79,19 @@ if $IS_EXISTING; then
   CURRENT_COMMANDS=$(jq -r ".targets[\"$EXISTING_KEY\"].commands[]" "$CONFIG" 2>/dev/null || true)
 fi
 
-# 2. Target key name
+# 2. Target key name (only prompt for new targets)
 if $IS_EXISTING; then
-  TARGET_KEY=$(gum input --value "$EXISTING_KEY" --header "Target key name:")
+  TARGET_KEY="$EXISTING_KEY"
 else
   TARGET_KEY=$(gum input --value "$SELECTION" --header "Target key name:")
-fi
-if [[ -z "$TARGET_KEY" ]]; then
-  echo "No target key provided."
-  exit 0
-fi
-
-# Check key collision
-if ! $IS_EXISTING && jq -e ".targets[\"$TARGET_KEY\"]" "$CONFIG" &>/dev/null; then
-  echo "Error: target '$TARGET_KEY' already exists in $CONFIG"
-  exit 1
-fi
-if $IS_EXISTING && [[ "$TARGET_KEY" != "$EXISTING_KEY" ]] && jq -e ".targets[\"$TARGET_KEY\"]" "$CONFIG" &>/dev/null; then
-  echo "Error: target '$TARGET_KEY' already exists in $CONFIG"
-  exit 1
+  if [[ -z "$TARGET_KEY" ]]; then
+    echo "No target key provided."
+    exit 0
+  fi
+  if jq -e ".targets[\"$TARGET_KEY\"]" "$CONFIG" &>/dev/null; then
+    echo "Error: target '$TARGET_KEY' already exists in $CONFIG"
+    exit 1
+  fi
 fi
 
 # 3. Method (pre-select for existing)
