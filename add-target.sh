@@ -107,47 +107,68 @@ else
   METHOD=$(printf "copy\nsymlink" | gum choose --header "Distribution method:")
 fi
 
-# 4. Select skills (pre-select for existing)
-AVAILABLE_SKILLS=$(ls -1 "$SCRIPT_DIR/skills/" 2>/dev/null || true)
-SELECTED_SKILLS=""
-if [[ -n "$AVAILABLE_SKILLS" ]]; then
-  if $IS_EXISTING && [[ -n "$CURRENT_SKILLS" ]]; then
-    PRESELECT=$(echo "$CURRENT_SKILLS" | tr '\n' ',' | sed 's/,$//')
-    SELECTED_SKILLS=$(echo "$AVAILABLE_SKILLS" | gum filter --no-limit --header "Select skills:" --selected="$PRESELECT" || true)
-  else
-    SELECTED_SKILLS=$(echo "$AVAILABLE_SKILLS" | gum filter --no-limit --header "Select skills:" || true)
-  fi
-fi
+# 4. Build combined list of skills + commands with prefixes
+AVAILABLE_ITEMS=""
+while IFS= read -r skill; do
+  [[ -z "$skill" ]] && continue
+  AVAILABLE_ITEMS="${AVAILABLE_ITEMS}skill: ${skill}"$'\n'
+done <<< "$(ls -1 "$SCRIPT_DIR/skills/" 2>/dev/null || true)"
 
-# 5. Select commands (pre-select for existing)
-AVAILABLE_COMMANDS=""
 while IFS= read -r f; do
   [[ -z "$f" ]] && continue
   rel="${f#$SCRIPT_DIR/commands/}"
   rel="${rel%.md}"
-  AVAILABLE_COMMANDS="${AVAILABLE_COMMANDS}${rel}"$'\n'
+  AVAILABLE_ITEMS="${AVAILABLE_ITEMS}command: ${rel}"$'\n'
 done < <(find "$SCRIPT_DIR/commands" -name '*.md' -type f 2>/dev/null || true)
-AVAILABLE_COMMANDS="$(echo "$AVAILABLE_COMMANDS" | sed '/^$/d')"
+AVAILABLE_ITEMS="$(echo "$AVAILABLE_ITEMS" | sed '/^$/d')"
 
-SELECTED_COMMANDS=""
-if [[ -n "$AVAILABLE_COMMANDS" ]]; then
-  if $IS_EXISTING && [[ -n "$CURRENT_COMMANDS" ]]; then
-    PRESELECT=$(echo "$CURRENT_COMMANDS" | tr '\n' ',' | sed 's/,$//')
-    SELECTED_COMMANDS=$(echo "$AVAILABLE_COMMANDS" | gum filter --no-limit --header "Select commands:" --selected="$PRESELECT" || true)
+# Build preselect list for existing targets
+PRESELECT=""
+if $IS_EXISTING; then
+  while IFS= read -r skill; do
+    [[ -z "$skill" ]] && continue
+    PRESELECT="${PRESELECT}skill: ${skill},"
+  done <<< "$CURRENT_SKILLS"
+  while IFS= read -r cmd; do
+    [[ -z "$cmd" ]] && continue
+    PRESELECT="${PRESELECT}command: ${cmd},"
+  done <<< "$CURRENT_COMMANDS"
+  PRESELECT="${PRESELECT%,}"
+fi
+
+# Select skills and commands
+SELECTED_ITEMS=""
+if [[ -n "$AVAILABLE_ITEMS" ]]; then
+  if $IS_EXISTING && [[ -n "$PRESELECT" ]]; then
+    SELECTED_ITEMS=$(echo "$AVAILABLE_ITEMS" | gum filter --no-limit --header "Select skills and commands:" --selected="$PRESELECT" || true)
   else
-    SELECTED_COMMANDS=$(echo "$AVAILABLE_COMMANDS" | gum filter --no-limit --header "Select commands:" || true)
+    SELECTED_ITEMS=$(echo "$AVAILABLE_ITEMS" | gum filter --no-limit --header "Select skills and commands:" || true)
   fi
 fi
 
-# Build JSON arrays
+# Split selections back into skills and commands
+SELECTED_SKILLS=""
+SELECTED_COMMANDS=""
+while IFS= read -r line; do
+  [[ -z "$line" ]] && continue
+  if [[ "$line" == skill:* ]]; then
+    SELECTED_SKILLS="${SELECTED_SKILLS}${line#skill: }"$'\n'
+  elif [[ "$line" == command:* ]]; then
+    SELECTED_COMMANDS="${SELECTED_COMMANDS}${line#command: }"$'\n'
+  fi
+done <<< "$SELECTED_ITEMS"
+SELECTED_SKILLS="$(echo "$SELECTED_SKILLS" | sed '/^$/d')"
+SELECTED_COMMANDS="$(echo "$SELECTED_COMMANDS" | sed '/^$/d')"
+
+# Build JSON arrays (sorted alphabetically)
 SKILLS_JSON="[]"
 if [[ -n "$SELECTED_SKILLS" ]]; then
-  SKILLS_JSON=$(echo "$SELECTED_SKILLS" | jq -R . | jq -s .)
+  SKILLS_JSON=$(echo "$SELECTED_SKILLS" | sort | jq -R . | jq -s .)
 fi
 
 COMMANDS_JSON="[]"
 if [[ -n "$SELECTED_COMMANDS" ]]; then
-  COMMANDS_JSON=$(echo "$SELECTED_COMMANDS" | jq -R . | jq -s .)
+  COMMANDS_JSON=$(echo "$SELECTED_COMMANDS" | sort | jq -R . | jq -s .)
 fi
 
 # Determine target path
