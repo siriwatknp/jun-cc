@@ -30,15 +30,16 @@
       "path": "~/Personal-Repos/scrapee2/.claude",
       "method": "copy",
       "skills": [
-        "conducting-tech-analysis",
-        "planning-research",
-        "working-on-plans",
         "agent-browser",
+        "conducting-tech-analysis",
+        "next-best-practices",
+        "planning-research",
         "using-mui-components",
         "vercel-composition-patterns",
+        "vercel-react-best-practices",
         "web-design-guidelines",
-        "writing-responses-docs",
-        "vercel-react-best-practices"
+        "working-on-plans",
+        "writing-responses-docs"
       ],
       "commands": []
     }
