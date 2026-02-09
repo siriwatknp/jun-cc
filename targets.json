@@ -42,6 +42,22 @@
         "writing-responses-docs"
       ],
       "commands": []
+    },
+    "attendee": {
+      "path": "~/Personal-Repos/attendee/.claude",
+      "method": "copy",
+      "skills": [
+        "agent-browser",
+        "conducting-tech-analysis",
+        "find-skills",
+        "next-best-practices",
+        "planning-research",
+        "vercel-composition-patterns",
+        "vercel-react-best-practices",
+        "web-design-guidelines",
+        "working-on-plans"
+      ],
+      "commands": []
     }
   }
 }
