@@ -20,7 +20,7 @@ if [[ -z "$TARGETS" ]]; then
 fi
 
 # Multi-select targets
-SELECTED=$(echo "$TARGETS" | gum filter --no-limit --header "Select targets to distribute to:")
+SELECTED=$(echo "$TARGETS" | gum filter --no-limit --header "Select targets to distribute to:" --selected="*")
 if [[ -z "$SELECTED" ]]; then
   echo "No targets selected."
   exit 0

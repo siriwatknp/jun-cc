@@ -4,26 +4,27 @@
       "path": "~/.claude",
       "method": "symlink",
       "skills": [
-        "using-mui-components",
-        "vercel-composition-patterns",
-        "vercel-react-native-skills",
-        "working-on-plans",
-        "writing-responses-docs",
-        "reviewing-base-ui-usage",
+        "agent-browser",
         "build-mui-demo",
-        "planning-research",
-        "supabase-postgres-best-practices",
         "build-mui-playground",
         "conducting-tech-analysis",
         "create-mui-sandbox",
+        "planning-research",
+        "reviewing-base-ui-usage",
+        "supabase-postgres-best-practices",
+        "using-mui-components",
+        "vercel-composition-patterns",
         "vercel-react-best-practices",
+        "vercel-react-native-skills",
         "web-design-guidelines",
-        "agent-browser"
+        "working-on-plans",
+        "write-mui-pr-description",
+        "writing-responses-docs"
       ],
       "commands": [
-        "mui/triage-issue",
+        "mui/collect-commits",
         "mui/summarize-pr",
-        "mui/collect-commits"
+        "mui/triage-issue"
       ]
     },
     "scrapee2": {
