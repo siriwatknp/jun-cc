@@ -23,6 +23,7 @@
       ],
       "commands": [
         "mui/collect-commits",
+        "mui/prepare-alpha-release",
         "mui/summarize-pr",
         "mui/triage-issue"
       ]
@@ -35,6 +36,7 @@
         "conducting-tech-analysis",
         "next-best-practices",
         "planning-research",
+        "understand-doc-system",
         "using-mui-components",
         "vercel-composition-patterns",
         "vercel-react-best-practices",
@@ -53,6 +55,7 @@
         "find-skills",
         "next-best-practices",
         "planning-research",
+        "using-mui-components",
         "vercel-composition-patterns",
         "vercel-react-best-practices",
         "web-design-guidelines",
