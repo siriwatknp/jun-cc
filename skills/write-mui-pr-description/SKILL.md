@@ -5,20 +5,14 @@ description: Write PR details based on the changes made to be used in Github PR 
 
 This skill can be used only for Github Pull Requests. Make sure you have full understanding of GitHub Flavored Markdown (GFM) to write effective PR descriptions.
 
-## Important: Use `gh` CLI for Consistency
-
-**Always prefer `gh` commands over `git` commands** when fetching PR information. This ensures consistent results regardless of local branch state (e.g., stale local master).
-
-## Important: Always Create Fresh Descriptions
+## Important: Use `gh` CLI without PR body
 
 **NEVER copy or reuse an existing PR description.** Always create the PR description fresh by:
 
-1. Reading the actual code changes (`gh pr diff`)
-2. Analyzing the commits (`gh pr view --json commits`)
+1. MUST use `gh pr view --json number,title,url,baseRefName,headRefName,commits` (WITHOUT `body`) to read PR metadata and commits.
+2. Reading the actual code changes (`gh pr diff`)
 3. Understanding the implementation from the source files
 4. Writing a new description based on your analysis
-
-DO NOT take the existing PR description (if any) into account when writing the new one. This ensures the description accurately reflects the latest implementation.
 
 ## Goal
 
@@ -29,9 +23,12 @@ The size of the PR description varies depending on the complexity of the changes
 
 - should have `closes #ISSUE_NUMBER` if applicable
 - should have links to deploy preview (all of the updated demos) if applicable
-- explain the changes in summary
-- for a new feature, show the usage with pseudo-code or code snippet and invoke the `/create-mui-sandbox` skill to create a sandbox with shareable link. **IMPORTANT: Always create a NEW sandbox - never reuse existing sandbox URLs from the PR body. After the sandbox is created, add the sandbox URL to the PR description under the usage section.**
-- drill down to explain the details with technical details but avoid presenting code snippets unless absolutely necessary
+- for a new feature, invoke the `/create-mui-sandbox` skill to create a sandbox with shareable link. **IMPORTANT: Always create a NEW sandbox - never reuse existing sandbox URLs from the PR body. After the sandbox is created, add the sandbox URL to the PR description under the usage section.**
+  - for bux fixes, the sandbox should demonstrate how the change fixes the issue
+  - for small new feature, the sandbox should demonstrate the basic usage with minimal explanation
+  - for medium to large new feature, the sandbox should demonstrate multiple examples with explanations starting from basic usage to advance customization
+- write a summary of the changes. this should be a high-level for users to understand in human language (might include a psuedocode or code snippet for usage if applicable), also include other relevant features that are related to the changes made in the PR.
+- write another section for reviewers to explain the technical details but avoid presenting code snippets unless absolutely necessary. should focus on explaining the design decisions and trade-offs.
 - for technical details, add references to the "Files changed" section of the Github PR for context, for example:
   - "The new [`GridEditLongTextCell`](https://github.com/mui/mui-x/pull/20980/files#diff-35467323ef549bba986740b362d085874355e6e8e7ea267a1b20f4da38478490) component is introduced to handle multiline text editing."
   - "[Prevent space key](https://github.com/mui/mui-x/pull/20980/files#diff-c6752f337948eb1066d4821e37e073ea84276370ab549d3efb97ebb3a2e10bdaR794-R796) from the grid navigation when the column is `longText`"
@@ -127,13 +124,7 @@ closes #ISSUE_NUMBER (if applicable)
 
 {{summary of changes}}
 
-**Usage:**
-
-{{code snippet}}
-
-<-- rest of content -->
-
-## Details
+## For Reviewers
 
 {{technical details with references to "Files changed" section}}
 
