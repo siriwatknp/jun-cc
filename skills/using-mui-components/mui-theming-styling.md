@@ -15,14 +15,12 @@
 ### Visual Accuracy Methodology
 
 1. **Spacing Precision**:
-
    - Use 0.5 step increments (0.5, 1, 1.5, 2, etc.)
    - Text/icon spacing: 0.5-1.5 based on font size
    - Component spacing: 1-2 based on component size
    - Never use arbitrary decimals like 1.2
 
 2. **Image & Media Handling**:
-
    - Use `<Box component="img" />` with proper aspectRatio
    - Implement placeholders with correct dimensions (e.g., https://placehold.co/600x400) WITHOUT using any query params
    - Never use fake divs to simulate images
@@ -274,3 +272,8 @@ When using `Stack` component or `Box` component with `display: flex`, the spacin
     }}
   >
   ```
+
+## Custom component
+
+- always wrap the component with `forwardRef` and pass the `ref` to the root element of the custom component.
+- pass `sx` prop with `...(Array.isArray(sx) ? sx : [sx]),` when building on top of Material UI components to allow users to override styles with `sx` prop.
