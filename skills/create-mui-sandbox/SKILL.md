@@ -8,6 +8,7 @@ description: Create a StackBlitz sandbox with MUI dependencies to quickly protot
 **Before doing anything else:**
 
 - Check if user wants a **shareable URL** → sets `--no-open` flag later
+- Check if user provides a **PR** (URL or number) → use PR packages (see [PR Packages](#pr-packages))
 - Identify which MUI packages to include:
   - `@mui/material` (always)
   - `@mui/icons-material` (if icons mentioned)
@@ -113,6 +114,45 @@ kill $SERVER_PID 2>/dev/null
 ### If NOT requested
 
 Inform user: "Click the **Fork** button in the sandbox to get a shareable URL."
+
+---
+
+## PR Packages
+
+By default, all MUI dependencies use `"latest"`. When user provides a PR (from `mui/material-ui` or `mui/mui-x`), replace the relevant packages with `pkg.pr.new` URLs.
+
+**Format:** `https://pkg.pr.new/{repo}/{package}@{commit-hash}`
+
+**Steps:**
+
+1. Get the repo and latest commit hash from the PR:
+   ```bash
+   gh pr view <PR> --repo <repo> --json headRefOid,commits --jq '.commits[-1].oid'
+   ```
+2. Replace only the packages that belong to the PR's repo. Non-repo packages stay `"latest"`.
+
+**Repo → packages mapping:**
+
+| Repo              | Packages                                                                                                                                                                                                   |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mui/material-ui` | `@mui/material`, `@mui/icons-material`, `@mui/system`                                                                                                                                                      |
+| `mui/mui-x`       | `@mui/x-data-grid`, `@mui/x-data-grid-pro`, `@mui/x-data-grid-premium`, `@mui/x-date-pickers`, `@mui/x-date-pickers-pro`, `@mui/x-charts`, `@mui/x-charts-pro`, `@mui/x-tree-view`, `@mui/x-tree-view-pro` |
+
+Only replace packages actually used in the sandbox. Example for a Data Grid sandbox from `mui/mui-x` PR with commit `abc123`:
+
+```json
+{
+  "dependencies": {
+    "@mui/material": "latest",
+    "@mui/x-data-grid": "https://pkg.pr.new/mui/mui-x/@mui/x-data-grid@abc123",
+    "react": "latest",
+    "react-dom": "latest",
+    "@emotion/react": "latest",
+    "@emotion/styled": "latest",
+    "typescript": "latest"
+  }
+}
+```
 
 ---
 

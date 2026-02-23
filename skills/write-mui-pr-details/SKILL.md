@@ -63,54 +63,7 @@ The deploy preview URL can be found by the `mui-bot` in the comments section of 
 
 ## Sandbox packages
 
-Each repo has a workflow to publish packages to `pkg.pr.new` for testing in sandboxes.
-
-For repo `mui/material-ui`, the packages are:
-
-- `@mui/material`
-- `@mui/icons-material`
-- `@mui/system`
-
-For repo `mui/mui-x`, the packages are:
-
-- `@mui/x-charts-vendor`
-- `@mui/x-charts`
-- `@mui/x-charts-premium`
-- `@mui/x-charts-pro`
-- `@mui/x-data-grid`
-- `@mui/x-codemod`
-- `@mui/x-data-grid-generator`
-- `@mui/x-data-grid-premium`
-- `@mui/x-data-grid-pro`
-- `@mui/x-date-pickers`
-- `@mui/x-date-pickers-pro`
-- `@mui/x-internal-gestures`
-- `@mui/x-internals`
-- `@mui/x-license`
-- `@mui/x-telemetry`
-- `@mui/x-tree-view`
-- `@mui/x-tree-view-pro`
-- `@mui/x-virtualizer`
-
-The packages to be used in the sandbox should be in this format `https://pkg.pr.new/{repo}/{package}@<commit-hash>`.
-
-For exmaple, if the PR is in `mui/mui-x` repo and the latest commit hash is `332c6d63a7ed97e88302e920a4d86e340a822309`, the package.json will look like this to build Data Grid demo for the basic usage of DataGrid with long text column:
-
-```json
-{
-  "dependencies": {
-    "@mui/material": "latest",
-    "@mui/x-data-grid": "https://pkg.pr.new/mui/mui-x/@mui/x-data-grid@332c6d63a7ed97e88302e920a4d86e340a822309",
-    "react-dom": "latest",
-    "react": "latest",
-    "@emotion/react": "latest",
-    "@emotion/styled": "latest",
-    "typescript": "latest"
-  }
-}
-```
-
-> Notice that the `@mui/material` package, required by `@mui/x-data-grid`, is set to `latest` since the repo is `mui/mui-x`.
+When invoking `/create-mui-sandbox`, pass the PR context so it uses `pkg.pr.new` packages automatically. See the `create-mui-sandbox` skill's [PR Packages](../create-mui-sandbox/SKILL.md#pr-packages) section for details.
 
 ## Format
 
