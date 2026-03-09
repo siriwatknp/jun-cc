@@ -12,18 +12,20 @@ for cmd in jq gum; do
   fi
 done
 
-# Read target names
-TARGETS=$(jq -r '.targets | keys[]' "$CONFIG")
-if [[ -z "$TARGETS" ]]; then
-  echo "No targets found in $CONFIG"
-  exit 1
-fi
-
-# Multi-select targets
-SELECTED=$(echo "$TARGETS" | gum filter --no-limit --header "Select targets to distribute to:" --selected="*")
-if [[ -z "$SELECTED" ]]; then
-  echo "No targets selected."
-  exit 0
+# Accept optional target args to skip picker
+if [[ $# -gt 0 ]]; then
+  SELECTED="$*"
+else
+  TARGETS=$(jq -r '.targets | keys[]' "$CONFIG")
+  if [[ -z "$TARGETS" ]]; then
+    echo "No targets found in $CONFIG"
+    exit 1
+  fi
+  SELECTED=$(echo "$TARGETS" | gum filter --no-limit --header "Select targets to distribute to:" --selected="*")
+  if [[ -z "$SELECTED" ]]; then
+    echo "No targets selected."
+    exit 0
+  fi
 fi
 
 expand_path() {
@@ -112,6 +114,85 @@ clean_stale() {
   fi
 }
 
+sync_agent_md() {
+  local dest_base="$1"
+  local agent_md_dir="$SCRIPT_DIR/agent-md"
+
+  [[ ! -d "$agent_md_dir" ]] && return
+
+  for src_file in "$agent_md_dir"/*; do
+    [[ ! -f "$src_file" ]] && continue
+    local filename="$(basename "$src_file")"
+
+    # Find target file: check dest_base first, then parent dir
+    local target_file=""
+    if [[ -f "$dest_base/$filename" ]]; then
+      target_file="$dest_base/$filename"
+    elif [[ -f "$(dirname "$dest_base")/$filename" ]]; then
+      target_file="$(dirname "$dest_base")/$filename"
+    else
+      echo "  SKIP agent-md $filename (not found in target)"
+      continue
+    fi
+
+    local begin_marker="<!-- BEGIN jun-cc:agent-md -->"
+    local end_marker="<!-- END jun-cc:agent-md -->"
+
+    if grep -qF "$begin_marker" "$target_file" 2>/dev/null; then
+      # Replace existing tagged section
+      local tmp_file="$target_file.tmp"
+      local replacement="$target_file.replacement"
+      { echo "$begin_marker"; cat "$src_file"; echo "$end_marker"; } > "$replacement"
+      awk -v begin="$begin_marker" -v end="$end_marker" -v rfile="$replacement" '
+        $0 == begin { skip=1; while ((getline line < rfile) > 0) print line; close(rfile); next }
+        $0 == end { skip=0; next }
+        !skip { print }
+      ' "$target_file" > "$tmp_file" && mv "$tmp_file" "$target_file"
+      rm -f "$replacement"
+      echo "  UPDATE agent-md $filename"
+    else
+      # Prepend to existing file
+      local tmp_file="$target_file.tmp"
+      { echo "$begin_marker"; cat "$src_file"; echo "$end_marker"; echo ""; cat "$target_file"; } > "$tmp_file" && mv "$tmp_file" "$target_file"
+      echo "  PREPEND agent-md $filename"
+    fi
+  done
+}
+
+clean_agent_md() {
+  local dest_base="$1"
+  local agent_md_dir="$SCRIPT_DIR/agent-md"
+  local begin_marker="<!-- BEGIN jun-cc:agent-md -->"
+  local end_marker="<!-- END jun-cc:agent-md -->"
+
+  [[ ! -d "$agent_md_dir" ]] && return
+
+  for src_file in "$agent_md_dir"/*; do
+    [[ ! -f "$src_file" ]] && continue
+    local filename="$(basename "$src_file")"
+
+    local target_file=""
+    if [[ -f "$dest_base/$filename" ]]; then
+      target_file="$dest_base/$filename"
+    elif [[ -f "$(dirname "$dest_base")/$filename" ]]; then
+      target_file="$(dirname "$dest_base")/$filename"
+    else
+      continue
+    fi
+
+    grep -qF "$begin_marker" "$target_file" 2>/dev/null || continue
+
+    local tmp_file="$target_file.tmp"
+    awk -v begin="$begin_marker" -v end="$end_marker" '
+      $0 == begin { skip=1; next }
+      $0 == end { skip=0; blank=1; next }
+      blank && /^$/ { blank=0; next }
+      !skip { blank=0; print }
+    ' "$target_file" > "$tmp_file" && mv "$tmp_file" "$target_file"
+    echo "  CLEAN agent-md $filename"
+  done
+}
+
 for target in $SELECTED; do
   echo ""
   echo "=== $target ==="
@@ -150,6 +231,14 @@ for target in $SELECTED; do
   for cmd_name in $COMMANDS; do
     distribute_item "command" "$cmd_name" "$METHOD" "$DEST_BASE"
   done
+
+  # Sync or clean agent-md
+  AGENT_MD=$(jq -r ".targets[\"$target\"].agent_md // false" "$CONFIG")
+  if [[ "$AGENT_MD" == "true" ]]; then
+    sync_agent_md "$DEST_BASE"
+  else
+    clean_agent_md "$DEST_BASE"
+  fi
 done
 
 echo ""

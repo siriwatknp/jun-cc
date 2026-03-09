@@ -72,11 +72,13 @@ CURRENT_PATH=""
 CURRENT_METHOD=""
 CURRENT_SKILLS=""
 CURRENT_COMMANDS=""
+CURRENT_AGENT_MD=""
 if $IS_EXISTING; then
   CURRENT_PATH=$(jq -r ".targets[\"$EXISTING_KEY\"].path" "$CONFIG")
   CURRENT_METHOD=$(jq -r ".targets[\"$EXISTING_KEY\"].method" "$CONFIG")
   CURRENT_SKILLS=$(jq -r ".targets[\"$EXISTING_KEY\"].skills[]" "$CONFIG" 2>/dev/null || true)
   CURRENT_COMMANDS=$(jq -r ".targets[\"$EXISTING_KEY\"].commands[]" "$CONFIG" 2>/dev/null || true)
+  CURRENT_AGENT_MD=$(jq -r ".targets[\"$EXISTING_KEY\"].agent_md // false" "$CONFIG")
 fi
 
 # 2. Target key name (only prompt for new targets)
@@ -101,7 +103,14 @@ else
   METHOD=$(printf "copy\nsymlink" | gum choose --header "Distribution method:")
 fi
 
-# 4. Build combined list of skills + commands with prefixes
+# 4. Agent-md sync
+if $IS_EXISTING && [[ "$CURRENT_AGENT_MD" == "true" ]]; then
+  AGENT_MD=$(printf "true\nfalse" | gum choose --header "Sync agent-md?" --selected="true")
+else
+  AGENT_MD=$(printf "false\ntrue" | gum choose --header "Sync agent-md?")
+fi
+
+# 5. Build combined list of skills + commands with prefixes
 AVAILABLE_ITEMS=""
 while IFS= read -r skill; do
   [[ -z "$skill" ]] && continue
@@ -130,39 +139,51 @@ if $IS_EXISTING; then
   PRESELECT="${PRESELECT%,}"
 fi
 
-# Select skills and commands
-SELECTED_ITEMS=""
-if [[ -n "$AVAILABLE_ITEMS" ]]; then
-  if $IS_EXISTING && [[ -n "$PRESELECT" ]]; then
-    SELECTED_ITEMS=$(echo "$AVAILABLE_ITEMS" | gum filter --no-limit --header "Select skills and commands:" --selected="$PRESELECT" || true)
-  else
-    SELECTED_ITEMS=$(echo "$AVAILABLE_ITEMS" | gum filter --no-limit --header "Select skills and commands:" || true)
-  fi
+# Select skills and commands (or keep existing)
+MODIFY_ITEMS=true
+if $IS_EXISTING; then
+  MODIFY_ITEMS=$(printf "no\nyes" | gum choose --header "Modify skills/commands?")
+  [[ "$MODIFY_ITEMS" == "yes" ]] && MODIFY_ITEMS=true || MODIFY_ITEMS=false
 fi
 
-# Split selections back into skills and commands
-SELECTED_SKILLS=""
-SELECTED_COMMANDS=""
-while IFS= read -r line; do
-  [[ -z "$line" ]] && continue
-  if [[ "$line" == skill:* ]]; then
-    SELECTED_SKILLS="${SELECTED_SKILLS}${line#skill: }"$'\n'
-  elif [[ "$line" == command:* ]]; then
-    SELECTED_COMMANDS="${SELECTED_COMMANDS}${line#command: }"$'\n'
+if $MODIFY_ITEMS; then
+  SELECTED_ITEMS=""
+  if [[ -n "$AVAILABLE_ITEMS" ]]; then
+    if $IS_EXISTING && [[ -n "$PRESELECT" ]]; then
+      SELECTED_ITEMS=$(echo "$AVAILABLE_ITEMS" | gum filter --no-limit --header "Select skills and commands:" --selected="$PRESELECT" || true)
+    else
+      SELECTED_ITEMS=$(echo "$AVAILABLE_ITEMS" | gum filter --no-limit --header "Select skills and commands:" || true)
+    fi
   fi
-done <<< "$SELECTED_ITEMS"
-SELECTED_SKILLS="$(echo "$SELECTED_SKILLS" | sed '/^$/d')"
-SELECTED_COMMANDS="$(echo "$SELECTED_COMMANDS" | sed '/^$/d')"
 
-# Build JSON arrays (sorted alphabetically)
-SKILLS_JSON="[]"
-if [[ -n "$SELECTED_SKILLS" ]]; then
-  SKILLS_JSON=$(echo "$SELECTED_SKILLS" | sort | jq -R . | jq -s .)
-fi
+  # Split selections back into skills and commands
+  SELECTED_SKILLS=""
+  SELECTED_COMMANDS=""
+  while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+    if [[ "$line" == skill:* ]]; then
+      SELECTED_SKILLS="${SELECTED_SKILLS}${line#skill: }"$'\n'
+    elif [[ "$line" == command:* ]]; then
+      SELECTED_COMMANDS="${SELECTED_COMMANDS}${line#command: }"$'\n'
+    fi
+  done <<< "$SELECTED_ITEMS"
+  SELECTED_SKILLS="$(echo "$SELECTED_SKILLS" | sed '/^$/d')"
+  SELECTED_COMMANDS="$(echo "$SELECTED_COMMANDS" | sed '/^$/d')"
 
-COMMANDS_JSON="[]"
-if [[ -n "$SELECTED_COMMANDS" ]]; then
-  COMMANDS_JSON=$(echo "$SELECTED_COMMANDS" | sort | jq -R . | jq -s .)
+  SKILLS_JSON="[]"
+  if [[ -n "$SELECTED_SKILLS" ]]; then
+    SKILLS_JSON=$(echo "$SELECTED_SKILLS" | sort | jq -R . | jq -s .)
+  fi
+
+  COMMANDS_JSON="[]"
+  if [[ -n "$SELECTED_COMMANDS" ]]; then
+    COMMANDS_JSON=$(echo "$SELECTED_COMMANDS" | sort | jq -R . | jq -s .)
+  fi
+else
+  SKILLS_JSON=$(jq ".targets[\"$EXISTING_KEY\"].skills" "$CONFIG")
+  COMMANDS_JSON=$(jq ".targets[\"$EXISTING_KEY\"].commands" "$CONFIG")
+  SELECTED_SKILLS="$CURRENT_SKILLS"
+  SELECTED_COMMANDS="$CURRENT_COMMANDS"
 fi
 
 # Determine target path
@@ -181,12 +202,16 @@ if $IS_EXISTING && [[ "$TARGET_KEY" != "$EXISTING_KEY" ]]; then
   jq "del(.targets[\"$EXISTING_KEY\"])" "$CONFIG" > "$TMP_CONFIG" && mv "$TMP_CONFIG" "$CONFIG"
 fi
 
+AGENT_MD_JSON="false"
+[[ "$AGENT_MD" == "true" ]] && AGENT_MD_JSON="true"
+
 jq --arg key "$TARGET_KEY" \
    --arg path "$TARGET_PATH" \
    --arg method "$METHOD" \
    --argjson skills "$SKILLS_JSON" \
    --argjson commands "$COMMANDS_JSON" \
-   '.targets[$key] = {path: $path, method: $method, skills: $skills, commands: $commands}' \
+   --argjson agent_md "$AGENT_MD_JSON" \
+   '.targets[$key] = {path: $path, method: $method, agent_md: $agent_md, skills: $skills, commands: $commands}' \
    "$CONFIG" > "$TMP_CONFIG" && mv "$TMP_CONFIG" "$CONFIG"
 
 echo ""
@@ -197,7 +222,10 @@ else
 fi
 echo "  path:     $TARGET_PATH"
 echo "  method:   $METHOD"
+echo "  agent_md: $AGENT_MD"
 echo "  skills:   $(echo "$SELECTED_SKILLS" | tr '\n' ' ')"
 echo "  commands: $(echo "$SELECTED_COMMANDS" | tr '\n' ' ')"
 echo ""
-echo "Run ./distribute.sh to distribute."
+if gum confirm "Run distribute now?"; then
+  "$SCRIPT_DIR/distribute.sh" "$TARGET_KEY"
+fi

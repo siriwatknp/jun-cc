@@ -3,12 +3,14 @@
     "global": {
       "path": "~/.claude",
       "method": "symlink",
+      "agent_md": true,
       "skills": [
         "agent-browser",
         "build-mui-demo",
         "build-mui-playground",
         "conducting-tech-analysis",
         "create-mui-sandbox",
+        "maintain-claude-md",
         "planning-research",
         "reviewing-base-ui-usage",
         "supabase-postgres-best-practices",
@@ -22,6 +24,7 @@
         "writing-responses-docs"
       ],
       "commands": [
+        "mui/check-release",
         "mui/collect-commits",
         "mui/prepare-alpha-release",
         "mui/summarize-pr",
@@ -31,6 +34,7 @@
     "scrapee2": {
       "path": "~/Personal-Repos/scrapee2/.claude",
       "method": "copy",
+      "agent_md": true,
       "skills": [
         "agent-browser",
         "conducting-tech-analysis",
@@ -60,6 +64,15 @@
         "vercel-react-best-practices",
         "web-design-guidelines",
         "working-on-plans"
+      ],
+      "commands": []
+    },
+    "material-ui-x": {
+      "path": "~/Personal-Repos/material-ui-x/.claude",
+      "method": "copy",
+      "agent_md": false,
+      "skills": [
+        "create-mui-sandbox"
       ],
       "commands": []
     }
