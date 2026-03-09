@@ -17,7 +17,11 @@ description: Create a StackBlitz sandbox with MUI dependencies to quickly protot
   - `@mui/x-charts` (if Charts mentioned)
   - `@mui/x-tree-view` (if Tree View mentioned)
 
-## 2. Create Demo Code
+## 2. MUI X License
+
+Do NOT call `LicenseInfo.setLicenseKey()`. Sandbox users don't have license keys — just let the watermark show.
+
+## 3. Create Demo Code
 
 Write `src/Demo.tsx`:
 
@@ -25,7 +29,7 @@ Write `src/Demo.tsx`:
 - Must have default export
 - Add extra MUI packages to `dependencies` in package.json if needed
 
-## 3. Build Config & Execute
+## 4. Build Config & Execute
 
 Build JSON config with all files (see [File Templates](#file-templates) below).
 
@@ -49,7 +53,7 @@ python3 <skill-dir>/create-stackblitz.py /tmp/stackblitz-config.json
 
 Resolve `<skill-dir>` from where this file was loaded.
 
-## 4. Post-execution
+## 5. Post-execution
 
 ### If shareable URL requested
 
@@ -104,11 +108,15 @@ agent-browser click "@eN"  # Replace @eN with actual ref from snapshot
 
 # Get forked URL
 sleep 5
-agent-browser get url
+FORKED_URL=$(agent-browser get url)
 # Output: https://stackblitz.com/edit/<project-id>?file=src%2FDemo.tsx
 
 # Cleanup
+agent-browser close
 kill $SERVER_PID 2>/dev/null
+
+# Open shareable URL in default browser
+open "$FORKED_URL"
 ```
 
 ### If NOT requested
