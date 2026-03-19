@@ -40,6 +40,12 @@
       "skills": [
         "agent-browser",
         "conducting-tech-analysis",
+        "firebase-ai-logic",
+        "firebase-auth-basics",
+        "firebase-basics",
+        "firebase-firestore-standard",
+        "firebase-hosting-basics",
+        "firebase-local-env-setup",
         "next-best-practices",
         "planning-research",
         "understand-doc-system",
