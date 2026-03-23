@@ -30,6 +30,10 @@ Follow this priority order for Github interactions. If the first method fails, m
 
 After created a PR, always open the PR in the browser for user to review.
 
+### Review suggestions
+
+Always inline review comments on the PR, fallback to general comments if not possible.
+
 ## Commit Rules
 
 - DO NOT add co-authors, "Generated with Claude Code" signatures, or emojis in commit messages
