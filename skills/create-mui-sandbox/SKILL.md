@@ -1,6 +1,7 @@
 ---
 name: create-mui-sandbox
 description: Create a StackBlitz sandbox with MUI dependencies to quickly prototype MUI components or reproduce issues.
+allowed-tools: Bash, Read, Skill(using-mui-components)
 ---
 
 ## 1. Determine Requirements
@@ -9,6 +10,7 @@ description: Create a StackBlitz sandbox with MUI dependencies to quickly protot
 
 - Check if user wants a **shareable URL** → sets `--no-open` flag later
 - Check if user provides a **PR** (URL or number) → use PR packages (see [PR Packages](#pr-packages))
+  - **Mandatory:** If you don't already have context about the PR, use `gh pr view` to understand the changes and its linked issue before writing Demo code
 - Identify which MUI packages to include:
   - `@mui/material` (always)
   - `@mui/icons-material` (if icons mentioned)
@@ -28,6 +30,7 @@ Write `src/Demo.tsx`:
 - Use `using-mui-components` skill for quality MUI code
 - Must have default export
 - Add extra MUI packages to `dependencies` in package.json if needed
+- **Minimal & focused:** Demo should demonstrate the PR's changes or reproduce the linked issue. Don't use unrelated APIs — only include dependencies necessary to showcase the fix/feature
 
 ## 4. Build Config & Execute
 

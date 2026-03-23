@@ -10,6 +10,7 @@
         "build-mui-playground",
         "conducting-tech-analysis",
         "create-mui-sandbox",
+        "create-pr-sandbox",
         "keep-pr-update",
         "mui:core-ci-fix",
         "mui:x-ci-fix",
