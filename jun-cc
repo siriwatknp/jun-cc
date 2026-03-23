@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")" && pwd)"
+
+usage() {
+  echo "Usage: jun-cc <command> [args...]"
+  echo ""
+  echo "Commands:"
+  echo "  distribute [targets...]   Distribute skills/commands to targets"
+  echo "  add-target [scan-dir]     Add or edit a target"
+  echo "  remove                    Remove skills/commands"
+  echo "  pull                      Pull skills from ~/.agents/skills"
+  echo "  sync-back [targets...]    Sync changes from targets back to source"
+  echo ""
+  exit 1
+}
+
+[[ $# -lt 1 ]] && usage
+
+CMD="$1"; shift
+
+case "$CMD" in
+  -h|--help)   usage ;;
+  distribute)  exec "$SCRIPT_DIR/distribute.sh" "$@" ;;
+  add-target)  exec "$SCRIPT_DIR/add-target.sh" "$@" ;;
+  remove)      exec "$SCRIPT_DIR/remove-skill.sh" "$@" ;;
+  pull)        exec "$SCRIPT_DIR/pull-skills.sh" "$@" ;;
+  sync-back)   exec "$SCRIPT_DIR/sync-back.sh" "$@" ;;
+  *)           echo "Unknown command: $CMD"; echo ""; usage ;;
+esac
