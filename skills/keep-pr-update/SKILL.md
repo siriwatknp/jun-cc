@@ -1,6 +1,6 @@
 ---
 name: keep-pr-update
-description: Update a PR branch with the latest changes from its target branch (upstream/origin). Handles merge conflicts by accepting incoming changes and reapplying PR commits. Use when asked to update a PR, rebase a PR, sync a PR with its base branch, or keep a PR up to date.
+description: Update a PR branch with the latest changes from its target branch (upstream/origin). Handles merge conflicts by accepting incoming changes and reapplying PR commits. Use when asked to update a PR, rebase a PR, sync a PR with its base branch, or keep a PR up to date. For MUI repos, prefer mui:core-ci-fix or mui:x-ci-fix which include this + CI fixes.
 user-invokable: true
 argument-hint: <pr-number-or-url>
 ---

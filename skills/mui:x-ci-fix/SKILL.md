@@ -1,68 +1,150 @@
 ---
 name: mui:x-ci-fix
-description: Pull a PR into a worktree, update it to latest upstream, run CI static checks in parallel via agent teams, commit fixes, and push. Use when asked to fix CI on a PR.
+description: Update a PR branch to latest upstream (with full conflict resolution), run CI static checks in parallel via agent teams, commit fixes, and push. Use when asked to fix CI, update, or maintain an MUI X PR.
 user-invokable: true
 ---
 
-Fix CI static check failures on a given PR.
+Update PR branch and fix CI static check failures on a given PR.
 
-The user provides a PR number or URL (e.g. `#1234` or `https://github.com/mui/material-ui-x/pulls/1234`).
+The user provides a PR number or URL (e.g. `#1234` or `https://github.com/mui/mui-x/pulls/1234`).
 
 ## Steps
 
-1. **Get PR info** — Use `gh pr view <pr> --json number,headRefName,headRepository,headRepositoryOwner,baseRefName` to get the branch name, base branch, and fork info.
+### 1. Check PR status
 
-2. **Enter worktree** — Use the `EnterWorktree` tool to create an isolated worktree for this work.
+```bash
+gh pr checks <pr>
+```
 
-3. **Checkout PR** — Run `gh pr checkout <pr>` to check out the PR branch in the worktree.
+If **all checks passed** and the PR has **no merge conflicts**, **stop immediately** and report to the user that no action is needed.
 
-4. **Update to latest upstream** — Run:
+Otherwise, proceed.
 
+### 2. Get PR info
+
+```bash
+gh pr view <pr> --json number,title,body,headRefName,headRepository,headRepositoryOwner,baseRefName,url
+```
+
+If the PR is not found, **stop immediately** and report the error to the user.
+
+Also fetch the linked issue if referenced in the body (look for `#<number>`, `fixes #`, `closes #`, etc.) via `gh issue view`.
+
+### 3. Understand the PR
+
+Before making any changes, build context:
+
+- Read the PR title, body, and linked issue to understand **why** this PR exists
+- Review the PR diff to understand **what** changed: `gh pr diff <pr>`
+- Summarize the PR purpose and key changes to the user
+
+This context is critical — if conflicts arise, you need to know which changes belong to the PR vs. the base branch.
+
+### 4. Enter worktree
+
+Use the `EnterWorktree` tool to create an isolated worktree for this work.
+
+### 5. Checkout PR
+
+```bash
+gh pr checkout <pr>
+```
+
+### 6. Update to latest upstream
+
+```bash
+git fetch upstream <baseRefName>
+git merge upstream/<baseRefName> --no-edit
+```
+
+If merge succeeds, skip to step 6.
+
+If merge conflicts occur:
+
+1. **Abort** the failed merge:
    ```bash
-   git fetch upstream <baseRefName>
-   git merge upstream/<baseRefName> --no-edit
+   git merge --abort
    ```
 
-   If merge conflicts occur, abort the merge with `git merge --abort`, report the conflict to the user, and continue with the remaining steps (install deps, run CI checks, etc.).
+2. **Save PR commits** — identify commits unique to this PR:
+   ```bash
+   git log --oneline upstream/<baseRefName>..HEAD
+   ```
+   Note the commit range.
 
-5. **Install dependencies** — Run `pnpm install --frozen-lockfile --prefer-offline`. The `--prefer-offline` flag reuses the shared pnpm store (already warm from the local repo) and avoids network requests. If it fails, fall back to `pnpm install`.
+3. **Force-merge accepting all incoming changes** — creates a clean merge point:
+   ```bash
+   git merge upstream/<baseRefName> --no-edit -X theirs
+   ```
 
-6. **Run CI checks in parallel** — Launch 3 agents in parallel using the Agent tool, each simulating a CI workflow. Pass the worktree path so agents run commands in the correct directory.
+4. **Cherry-pick PR commits on top** — reapply the PR's own changes:
+   ```bash
+   git cherry-pick <oldest-pr-commit>^..<newest-pr-commit>
+   ```
+   If cherry-pick conflicts occur, resolve by keeping the cherry-picked (PR) changes:
+   ```bash
+   git checkout --theirs .
+   git add .
+   git cherry-pick --continue
+   ```
 
-   ### Agent 1: `test_static`
+5. **Verify** — `git log --oneline -10` and `git diff upstream/<baseRefName> --stat` to sanity-check.
 
-   Run these commands sequentially:
-   a. `pnpm dedupe` — Only if the PR diff includes changes to any `package.json` (check via `gh pr diff <pr> --name-only | grep package.json`). Skip otherwise.
-   b. `pnpm prettier` — Format changed files
-   c. `pnpm proptypes` — Regenerate PropTypes
-   d. `pnpm docs:api` — Regenerate API docs
-   e. `pnpm extract-error-codes` — Update error codes
-   f. `pnpm l10n` — Update l10n
-   g. `pnpm generate:exports` — Regenerate deep exports for charts packages
+### 7. Install dependencies
 
-   ### Agent 2: `test_types`
+Run `pnpm install --frozen-lockfile --prefer-offline`. The `--prefer-offline` flag reuses the shared pnpm store (already warm from the local repo) and avoids network requests. If it fails, fall back to `pnpm install`.
 
-   Run these commands sequentially:
-   a. `pnpm docs:typescript:formatted` — Regenerate JS demo files
+### 8. Run CI checks in parallel
 
-   ### Agent 3: `test_lint`
+Launch 3 agents in parallel using the Agent tool, each simulating a CI workflow. Pass the worktree path so agents run commands in the correct directory.
 
-   Run these commands sequentially:
-   a. `pnpm eslint:fix` — Fix lint issues
-   b. `pnpm markdownlint` — Fix markdown lint issues
+#### Agent 1: `test_static`
 
-   Each agent should report which commands produced changes (via `git status` or `git diff` after each command).
+Run these commands sequentially:
+a. `pnpm dedupe` — Only if the PR diff includes changes to any `package.json` (check via `gh pr diff <pr> --name-only | grep package.json`). Skip otherwise.
+b. `pnpm prettier` — Format changed files
+c. `pnpm proptypes` — Regenerate PropTypes
+d. `pnpm docs:api` — Regenerate API docs
+e. `pnpm extract-error-codes` — Update error codes
+f. `pnpm l10n` — Update l10n
+g. `pnpm generate:exports` — Regenerate deep exports for charts packages
 
-7. **Commit** — After all agents complete, if there are changes, stage all and commit with message: `fix ci`
+#### Agent 2: `test_types`
 
-8. **Push** — Run `git push` to push the changes to the PR branch.
+Run these commands sequentially:
+a. `pnpm docs:typescript:formatted` — Regenerate JS demo files
 
-9. **Exit worktree** — Use the `ExitWorktree` tool.
+#### Agent 3: `test_lint`
 
-10. **Report** — Summarize what was fixed (from each agent's results) and confirm the push succeeded.
+Run these commands sequentially:
+a. `pnpm eslint:fix` — Fix lint issues
+b. `pnpm markdownlint` — Fix markdown lint issues
+
+Each agent should report which commands produced changes (via `git status` or `git diff` after each command).
+
+### 9. Commit and push
+
+After all agents complete, if there are changes, stage all and commit with message: `fix ci`
+
+Push with `--force-with-lease` (safe — won't overwrite others' changes, but needed if history was rewritten during conflict resolution).
+
+```bash
+git push --force-with-lease
+```
+
+### 10. Exit worktree
+
+Use the `ExitWorktree` tool with `delete: true` to always clean up the worktree.
+
+### 11. Report
+
+Summarize:
+- PR purpose (from step 2)
+- Whether conflicts were encountered and how they were resolved
+- What CI checks were fixed (from each agent's results)
+- Final state of the branch
 
 ## Important
 
-- If merge conflicts occur during the upstream merge, abort the merge (`git merge --abort`), report to user, but continue with the rest of the steps.
 - If a CI command fails with actual code errors (not just formatting), report to user instead of trying to fix code logic.
 - Only commit if there are actual changes.
