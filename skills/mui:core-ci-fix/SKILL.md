@@ -1,6 +1,6 @@
 ---
 name: mui:core-ci-fix
-description: Pull a PR into a worktree, update it to latest upstream, run CI static checks in parallel via agent teams, commit fixes, and push. Use when asked to fix CI on a Material UI (core) PR.
+description: Fix failed checks on the PR of mui/material-ui repo. Pull a PR into a worktree, update it to latest upstream, run CI static checks in parallel via agent teams, commit fixes, and push. Use when asked to fix CI on a Material UI (core) PR.
 user-invokable: true
 ---
 
@@ -43,6 +43,7 @@ The user provides a PR number or URL (e.g. `#1234` or `https://github.com/mui/ma
 
    Run these commands sequentially:
    a. `pnpm docs:typescript:formatted` — Regenerate JS demo files
+   b. `pnpm typescript:ci` — Run TypeScript checks
 
    ### Agent 3: `test_lint`
 
