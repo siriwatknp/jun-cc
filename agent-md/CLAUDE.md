@@ -47,3 +47,9 @@ If the tasks you just completed are documented in a markdown file, ALWAYS cross 
 Users may make typos or be unaware of existing terms. Before implementing, check if the project already has the same thing under a different name. If so, point it out and confirm before proceeding.
 
 Example: project has `not` filter operator, user asks to add `isNot` with same behavior → flag the existing `not` and ask if they still want the addition.
+
+## Project-specific rules
+
+### Material UI and MUI X
+
+Whenever code changes are made in a branch or a worktree, run all CI checks locally to fix any issues before pushing. Refer to `mui:core-ci-fix` and `mui:x-ci-fix` skills for the exact steps.
