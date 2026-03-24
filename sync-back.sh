@@ -2,246 +2,73 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-CONFIG="$SCRIPT_DIR/targets.json"
 
-for cmd in jq gum; do
-  if ! command -v "$cmd" &>/dev/null; then
-    echo "Error: $cmd is required. Install with: brew install $cmd"
-    exit 1
-  fi
-done
-
-expand_path() { echo "${1/#\~/$HOME}"; }
-
-# Get mtime of a file (macOS compatible)
-get_mtime() { stat -f %m "$1" 2>/dev/null || echo 0; }
-
-# Get newest mtime in a directory (recursive)
-get_newest_mtime() {
-  local dir="$1"
-  local newest=0
-  while IFS= read -r f; do
-    [[ -z "$f" ]] && continue
-    local mt
-    mt=$(get_mtime "$f")
-    (( mt > newest )) && newest=$mt
-  done < <(find "$dir" -type f 2>/dev/null)
-  echo "$newest"
+usage() {
+  echo "Usage: jun-cc sync-back <path>"
+  echo ""
+  echo "Sync a skill or command back to jun-cc."
+  echo "Detects type from path (looks for /skills/ or /commands/ segment)."
+  echo ""
+  echo "Examples:"
+  echo "  jun-cc sync-back ~/.claude/skills/my-skill"
+  echo "  jun-cc sync-back ~/.claude/skills/my-skill/SKILL.md"
+  echo "  jun-cc sync-back /path/to/project/.claude/commands/mui/triage-issue.md"
+  exit 1
 }
 
-# Compare source vs target, return "newer", "older", "same", or "missing"
-compare_item() {
-  local src="$1" dest="$2"
-  [[ ! -e "$dest" ]] && echo "missing" && return
-  [[ ! -e "$src" ]] && echo "new" && return
+[[ $# -lt 1 || "$1" == "-h" || "$1" == "--help" ]] && usage
 
-  if [[ -d "$src" ]]; then
-    local src_mt dest_mt
-    src_mt=$(get_newest_mtime "$src")
-    dest_mt=$(get_newest_mtime "$dest")
-    if (( dest_mt > src_mt )); then
-      echo "newer"
-    elif (( dest_mt < src_mt )); then
-      echo "older"
-    else
-      echo "same"
-    fi
-  else
-    local src_mt dest_mt
-    src_mt=$(get_mtime "$src")
-    dest_mt=$(get_mtime "$dest")
-    if (( dest_mt > src_mt )); then
-      echo "newer"
-    elif (( dest_mt < src_mt )); then
-      echo "older"
-    else
-      echo "same"
-    fi
-  fi
-}
-
-# Only consider copy targets (symlinks already point to source)
-COPY_TARGETS=""
-ALL_TARGETS=$(jq -r '.targets | keys[]' "$CONFIG")
-while IFS= read -r target; do
-  [[ -z "$target" ]] && continue
-  method=$(jq -r ".targets[\"$target\"].method" "$CONFIG")
-  [[ "$method" == "copy" ]] || continue
-  COPY_TARGETS="${COPY_TARGETS}${target}"$'\n'
-done <<< "$ALL_TARGETS"
-COPY_TARGETS="$(echo "$COPY_TARGETS" | sed '/^$/d')"
-
-if [[ -z "$COPY_TARGETS" ]]; then
-  echo "No copy targets found (symlink targets don't need sync-back)."
-  exit 0
-fi
-
-# Select targets
-if [[ $# -gt 0 ]]; then
-  SELECTED="$*"
+# Resolve to absolute path (strip trailing slash)
+INPUT="${1%/}"
+if [[ -d "$INPUT" ]]; then
+  TARGET_PATH="$(cd "$INPUT" && pwd)"
+elif [[ -f "$INPUT" ]]; then
+  TARGET_PATH="$(cd "$(dirname "$INPUT")" && pwd)/$(basename "$INPUT")"
 else
-  SELECTED=$(echo "$COPY_TARGETS" | gum filter --no-limit --header "Select targets to sync back from:" --selected="*")
-  if [[ -z "$SELECTED" ]]; then
-    echo "No targets selected."
-    exit 0
-  fi
+  echo "Error: $INPUT does not exist"
+  exit 1
 fi
 
-# Collect all changed items across selected targets
-CHANGES=""
+# Detect type by finding /skills/ or /commands/ in the path
+# Append / so both "skills/foo" and "skills/foo/file" match consistently
+match_path="$TARGET_PATH/"
+if [[ "$match_path" == */skills/* ]]; then
+  after_skills="${match_path#*/skills/}"
+  skill_name="${after_skills%%/*}"
+  skill_dir="${TARGET_PATH%%/skills/*}/skills/$skill_name"
+  dest="$SCRIPT_DIR/skills/$skill_name"
 
-for target in $SELECTED; do
-  DEST_BASE=$(expand_path "$(jq -r ".targets[\"$target\"].path" "$CONFIG")")
-
-  # Check skills
-  SKILLS_CFG=$(jq -r ".targets[\"$target\"].skills" "$CONFIG")
-  if [[ "$SKILLS_CFG" == '"*"' ]]; then
-    SKILLS=$(ls -1 "$SCRIPT_DIR/skills/" 2>/dev/null || true)
+  if [[ -d "$dest" ]]; then
+    echo "Overwrite skill: $skill_name"
   else
-    SKILLS=$(jq -r ".targets[\"$target\"].skills[]" "$CONFIG" 2>/dev/null || true)
+    echo "New skill: $skill_name"
   fi
 
-  while IFS= read -r skill; do
-    [[ -z "$skill" ]] && continue
-    local_src="$SCRIPT_DIR/skills/$skill"
-    remote="$DEST_BASE/skills/$skill"
-    status=$(compare_item "$local_src" "$remote")
-    if [[ "$status" == "newer" || "$status" == "new" ]]; then
-      CHANGES="${CHANGES}[$target] skill: $skill ($status)"$'\n'
-    fi
-  done <<< "$SKILLS"
+  rm -rf "$dest"
+  cp -R "$skill_dir" "$dest"
+  echo "  ← $skill_dir"
 
-  # Check commands
-  COMMANDS_CFG=$(jq -r ".targets[\"$target\"].commands" "$CONFIG")
-  if [[ "$COMMANDS_CFG" == '"*"' ]]; then
-    CMDS=""
-    while IFS= read -r f; do
-      [[ -z "$f" ]] && continue
-      rel="${f#$SCRIPT_DIR/commands/}"
-      CMDS="${CMDS}${rel%.md}"$'\n'
-    done < <(find "$SCRIPT_DIR/commands" -name '*.md' -type f 2>/dev/null || true)
+elif [[ "$FILE_PATH" == */commands/* ]]; then
+  # Extract relative command path after /commands/ (e.g. mui/triage-issue.md)
+  after_commands="${FILE_PATH#*/commands/}"
+  cmd_name="${after_commands%.md}"
+  dest="$SCRIPT_DIR/commands/$cmd_name.md"
+
+  mkdir -p "$(dirname "$dest")"
+
+  if [[ -f "$dest" ]]; then
+    echo "Overwrite command: $cmd_name"
   else
-    CMDS=$(jq -r ".targets[\"$target\"].commands[]" "$CONFIG" 2>/dev/null || true)
+    echo "New command: $cmd_name"
   fi
 
-  while IFS= read -r cmd_name; do
-    [[ -z "$cmd_name" ]] && continue
-    local_src="$SCRIPT_DIR/commands/$cmd_name.md"
-    remote="$DEST_BASE/commands/$cmd_name.md"
-    status=$(compare_item "$local_src" "$remote")
-    if [[ "$status" == "newer" || "$status" == "new" ]]; then
-      CHANGES="${CHANGES}[$target] command: $cmd_name ($status)"$'\n'
-    fi
-  done <<< "$CMDS"
+  cp "$FILE_PATH" "$dest"
+  echo "  ← $FILE_PATH"
 
-  # Check agent-md
-  AGENT_MD=$(jq -r ".targets[\"$target\"].agent_md // false" "$CONFIG")
-  if [[ "$AGENT_MD" == "true" ]] && [[ -d "$SCRIPT_DIR/agent-md" ]]; then
-    for src_file in "$SCRIPT_DIR/agent-md"/*; do
-      [[ ! -f "$src_file" ]] && continue
-      filename="$(basename "$src_file")"
-
-      # Find the target file (same logic as distribute.sh)
-      target_file=""
-      if [[ -f "$DEST_BASE/$filename" ]]; then
-        target_file="$DEST_BASE/$filename"
-      elif [[ -f "$(dirname "$DEST_BASE")/$filename" ]]; then
-        target_file="$(dirname "$DEST_BASE")/$filename"
-      fi
-      [[ -z "$target_file" ]] && continue
-
-      # Extract the tagged section from target and compare to source
-      begin_marker="<!-- BEGIN jun-cc:agent-md -->"
-      end_marker="<!-- END jun-cc:agent-md -->"
-      if grep -qF "$begin_marker" "$target_file" 2>/dev/null; then
-        current_content=$(awk -v begin="$begin_marker" -v end="$end_marker" '
-          $0 == begin { skip=1; next }
-          $0 == end { skip=0; next }
-          skip { print }
-        ' "$target_file")
-        source_content=$(cat "$src_file")
-        if [[ "$current_content" != "$source_content" ]]; then
-          CHANGES="${CHANGES}[$target] agent-md: $filename (modified)"$'\n'
-        fi
-      fi
-    done
-  fi
-done
-
-CHANGES="$(echo "$CHANGES" | sed '/^$/d')"
-
-if [[ -z "$CHANGES" ]]; then
-  echo "Everything is up to date. No changes to sync back."
-  exit 0
+else
+  echo "Error: cannot detect type from path"
+  echo "Path must contain /skills/ or /commands/ segment"
+  exit 1
 fi
 
-# Let user pick which changes to sync
-echo "Detected changes at targets:"
-echo ""
-
-SELECTED_CHANGES=$(echo "$CHANGES" | gum filter --no-limit --header "Select changes to sync back:" --selected="*")
-if [[ -z "$SELECTED_CHANGES" ]]; then
-  echo "Nothing selected."
-  exit 0
-fi
-
-echo ""
-echo "Will sync back:"
-echo "$SELECTED_CHANGES" | sed 's/^/  /'
-echo ""
-gum confirm "Proceed?" || exit 0
-
-# Apply selected changes
-while IFS= read -r line; do
-  [[ -z "$line" ]] && continue
-
-  # Parse: [target] type: name (status)
-  target=$(echo "$line" | sed 's/^\[\(.*\)\].*/\1/')
-  rest=$(echo "$line" | sed 's/^\[.*\] //')
-  type=$(echo "$rest" | cut -d: -f1)
-  name_status=$(echo "$rest" | cut -d: -f2- | sed 's/^ //')
-  name=$(echo "$name_status" | sed 's/ (.*)//')
-
-  DEST_BASE=$(expand_path "$(jq -r ".targets[\"$target\"].path" "$CONFIG")")
-
-  case "$type" in
-    skill)
-      remote="$DEST_BASE/skills/$name"
-      local_dest="$SCRIPT_DIR/skills/$name"
-      if [[ -d "$local_dest" ]]; then
-        rm -rf "$local_dest"
-      fi
-      cp -R "$remote" "$local_dest"
-      echo "  SYNC skill $name ← $target"
-      ;;
-    command)
-      remote="$DEST_BASE/commands/$name.md"
-      local_dest="$SCRIPT_DIR/commands/$name.md"
-      mkdir -p "$(dirname "$local_dest")"
-      cp "$remote" "$local_dest"
-      echo "  SYNC command $name ← $target"
-      ;;
-    agent-md)
-      target_file=""
-      if [[ -f "$DEST_BASE/$name" ]]; then
-        target_file="$DEST_BASE/$name"
-      elif [[ -f "$(dirname "$DEST_BASE")/$name" ]]; then
-        target_file="$(dirname "$DEST_BASE")/$name"
-      fi
-      if [[ -n "$target_file" ]]; then
-        begin_marker="<!-- BEGIN jun-cc:agent-md -->"
-        end_marker="<!-- END jun-cc:agent-md -->"
-        content=$(awk -v begin="$begin_marker" -v end="$end_marker" '
-          $0 == begin { skip=1; next }
-          $0 == end { skip=0; next }
-          skip { print }
-        ' "$target_file")
-        echo "$content" > "$SCRIPT_DIR/agent-md/$name"
-        echo "  SYNC agent-md $name ← $target"
-      fi
-      ;;
-  esac
-done <<< "$SELECTED_CHANGES"
-
-echo ""
 echo "Done."
