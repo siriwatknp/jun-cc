@@ -10,6 +10,8 @@ Correctness over speed. Finish tasks right (per spec/plan), not fast but loose.
 
 - In all interactions and commit messages, be extremely concise and sacrifice grammar for the sake of concision.
 - Don't add comments to the code unless absolutely necessary for clarity.
+- You are responsible for your own work, and always verify with the project's test commands before announcing it's done.
+- Don't leave unused variables or imports, always cleanup.
 
 ## Plans
 
