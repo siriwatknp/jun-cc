@@ -1,12 +1,17 @@
 ---
 name: mui:x-ci-fix
 description: Update a PR branch to latest upstream (with full conflict resolution), run CI static checks in parallel via agent teams, commit fixes, and push. Use when asked to fix CI, update, or maintain an MUI X PR.
-user-invokable: true
+user-invocable: true
+argument-hint: "[pr-number-or-url] [--centralized]"
 ---
 
 Update PR branch and fix CI static check failures on a given PR.
 
 The user provides a PR number or URL (e.g. `#1234` or `https://github.com/mui/mui-x/pulls/1234`).
+
+## Options
+
+- `--centralized`: Use centralized fix mode. All subagents only run checks and report failures. The main agent fixes all issues, then re-dispatches subagents to verify. Default mode is phased — subagents fix issues themselves.
 
 ## Steps
 
@@ -62,26 +67,33 @@ If merge succeeds, skip to step 6.
 If merge conflicts occur:
 
 1. **Abort** the failed merge:
+
    ```bash
    git merge --abort
    ```
 
 2. **Save PR commits** — identify commits unique to this PR:
+
    ```bash
    git log --oneline upstream/<baseRefName>..HEAD
    ```
+
    Note the commit range.
 
 3. **Force-merge accepting all incoming changes** — creates a clean merge point:
+
    ```bash
    git merge upstream/<baseRefName> --no-edit -X theirs
    ```
 
 4. **Cherry-pick PR commits on top** — reapply the PR's own changes:
+
    ```bash
    git cherry-pick <oldest-pr-commit>^..<newest-pr-commit>
    ```
+
    If cherry-pick conflicts occur, resolve by keeping the cherry-picked (PR) changes:
+
    ```bash
    git checkout --theirs .
    git add .
@@ -94,37 +106,51 @@ If merge conflicts occur:
 
 Run `pnpm install --frozen-lockfile --prefer-offline`. The `--prefer-offline` flag reuses the shared pnpm store (already warm from the local repo) and avoids network requests. If it fails, fall back to `pnpm install`.
 
-### 8. Run CI checks in parallel
+### 8. Run CI checks
 
-Launch 3 agents in parallel using the Agent tool, each simulating a CI workflow. Pass the worktree path so agents run commands in the correct directory.
+All agents share the same worktree. The execution mode depends on the `--centralized` flag.
 
-#### Agent 1: `test_static`
+#### CI check definitions
 
-Run these commands sequentially:
-a. `pnpm dedupe` — Only if the PR diff includes changes to any `package.json` (check via `gh pr diff <pr> --name-only | grep package.json`). Skip otherwise.
-b. `pnpm prettier` — Format changed files
-c. `pnpm proptypes` — Regenerate PropTypes
-d. `pnpm docs:api` — Regenerate API docs
-e. `pnpm extract-error-codes` — Update error codes
-f. `pnpm l10n` — Update l10n
-g. `pnpm generate:exports` — Regenerate deep exports for charts packages
+| Agent | Name | Commands | Auto-fixable? |
+|-------|------|----------|---------------|
+| 1 | `test_static` | a. `pnpm dedupe` (only if PR changes any `package.json`)<br>b. `pnpm prettier`<br>c. `pnpm proptypes`<br>d. `pnpm docs:api`<br>e. `pnpm extract-error-codes`<br>f. `pnpm l10n`<br>g. `pnpm generate:exports` | Yes (commands regenerate files) |
+| 2 | `test_types` | a. `pnpm docs:typescript:formatted`<br>b. `pnpm typescript:ci` | Partially (a regenerates files, b is a check) |
+| 3 | `test_lint` | a. `pnpm eslint:fix`<br>b. `pnpm markdownlint` | Yes (--fix auto-corrects) |
+| 4 | `test_unit` | a. `pnpm test:unit --run` | No (needs code fixes) |
+| 5 | `test_browser` | a. `pnpm test:browser --run`<br>Requires Playwright. If not installed, skip and report. | No (needs code fixes) |
 
-#### Agent 2: `test_types`
+#### Phased mode (default)
 
-Run these commands sequentially:
-a. `pnpm docs:typescript:formatted` — Regenerate JS demo files
+Run in two phases to avoid file conflicts between agents.
 
-#### Agent 3: `test_lint`
+**Phase 1** — Launch agents 1-3 (`test_static`, `test_types`, `test_lint`) in parallel.
+- Each agent runs its commands, checks `git diff` after each command, and reports changes.
+- If a check command fails (e.g. `typescript:ci`), the agent analyzes the error and fixes it, then re-runs the failing command to verify.
+- Each agent loops until all its checks pass (max 3 retries).
 
-Run these commands sequentially:
-a. `pnpm eslint:fix` — Fix lint issues
-b. `pnpm markdownlint` — Fix markdown lint issues
+**Phase 2** — After phase 1 completes and changes are committed, launch agents 4-5 (`test_unit`, `test_browser`) in parallel.
+- Each agent runs tests, and if they fail, analyzes failures and fixes them (e.g. update snapshots, fix assertions, adjust test expectations to match PR changes).
+- Each agent loops until tests pass (max 3 retries).
 
-Each agent should report which commands produced changes (via `git status` or `git diff` after each command).
+#### Centralized mode (`--centralized`)
+
+All 5 agents run in parallel but **only report failures** — they do NOT edit any files.
+
+Each agent should report:
+- Which commands failed
+- Full error output
+- Which files are likely involved
+
+After all agents complete, the **main agent**:
+1. Analyzes all reported failures together
+2. Fixes all issues (single writer, no conflicts)
+3. Re-dispatches only the failed agents to verify fixes
+4. Repeats until all pass (max 3 retries)
 
 ### 9. Commit and push
 
-After all agents complete, if there are changes, stage all and commit with message: `fix ci`
+After all checks pass, if there are changes, stage all and commit with message: `fix ci`
 
 Push with `--force-with-lease` (safe — won't overwrite others' changes, but needed if history was rewritten during conflict resolution).
 
@@ -139,12 +165,15 @@ Use the `ExitWorktree` tool with `delete: true` to always clean up the worktree.
 ### 11. Report
 
 Summarize:
+
 - PR purpose (from step 2)
 - Whether conflicts were encountered and how they were resolved
 - What CI checks were fixed (from each agent's results)
+- Which mode was used (phased or centralized)
 - Final state of the branch
 
 ## Important
 
-- If a CI command fails with actual code errors (not just formatting), report to user instead of trying to fix code logic.
 - Only commit if there are actual changes.
+- Max 3 retry loops per agent to prevent infinite loops.
+- If an agent exhausts retries, report the remaining failures to the user.
