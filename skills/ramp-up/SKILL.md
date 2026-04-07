@@ -17,9 +17,12 @@ The user may provide additional resource paths (files, directories, URLs) as arg
 
 ## Step 1: Detect environment
 
-First, determine the base ref. The local main/master branch may be stale, so always diff against the remote:
-- If a PR exists, use the PR's `baseRefName` (e.g., `origin/main`)
-- Otherwise, detect the default branch: `git remote show origin | grep 'HEAD branch'`, then use `origin/<that branch>`
+First, determine the base ref. The local main/master branch may be stale, so always diff against the remote.
+
+Detect if the repo is a fork: check if an `upstream` remote exists (`git remote get-url upstream`). If it does, the repo is a fork — use `upstream` as the remote for the base ref. Otherwise, use `origin`.
+
+- If a PR exists, use the PR's `baseRefName` with the appropriate remote (e.g., `upstream/main` for forks, `origin/main` otherwise)
+- Otherwise, detect the default branch from the appropriate remote: `git remote show <remote> | grep 'HEAD branch'`, then use `<remote>/<that branch>`
 
 Store this as `$BASE` for all subsequent commands.
 

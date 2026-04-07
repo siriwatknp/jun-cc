@@ -26,3 +26,4 @@ The report should include:
 
 - Use Github CLI, fallback to Github MCP if necessary
 - Focus on merged commits to master/main branch only
+- For forked repos, resolve the upstream/parent repo and query commits against that repo (not the fork). Use `gh repo view --json parent` to detect forks and get the actual repo owner/name.
