@@ -86,6 +86,15 @@
         "create-mui-sandbox"
       ],
       "commands": []
+    },
+    "mui-treasury": {
+      "path": "~/Personal-Repos/mui-treasury/.claude",
+      "method": "copy",
+      "agent_md": true,
+      "skills": [
+        "understand-doc-system"
+      ],
+      "commands": []
     }
   }
 }
