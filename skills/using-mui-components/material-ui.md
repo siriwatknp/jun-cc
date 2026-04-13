@@ -29,26 +29,22 @@
 ### TextField and Form Best Practices
 
 1. **Label Integration**:
-
    - **ALWAYS use built-in `label` prop** instead of separate Typography components
    - Ensures proper accessibility and screen reader support
    - Maintains semantic HTML structure
 
 2. **Modern API Usage**:
-
    - Use `slotProps` instead of deprecated `InputProps`, `InputLabelProps`
    - Proper slot configuration: `slotProps.input`, `slotProps.inputLabel`, `slotProps.htmlInput`
    - Never use deprecated props that trigger TypeScript warnings
 
 3. **Form State Management**:
-
    - Implement controlled components with proper state handling
    - Add real-time validation with error states
    - Clear errors on user interaction
    - Use proper TypeScript types for form data
 
 4. **Accessibility Requirements**:
-
    - Include `required` prop for mandatory fields
    - Provide `error` and `helperText` for validation feedback
    - Ensure proper ARIA attributes
@@ -89,26 +85,22 @@
 ### TextField and Form Best Practices
 
 1. **Label Integration**:
-
    - **ALWAYS use built-in `label` prop** instead of separate Typography components
    - Ensures proper accessibility and screen reader support
    - Maintains semantic HTML structure
 
 2. **Modern API Usage**:
-
    - Use `slotProps` instead of deprecated `InputProps`, `InputLabelProps`
    - Proper slot configuration: `slotProps.input`, `slotProps.inputLabel`, `slotProps.htmlInput`
    - Never use deprecated props that trigger TypeScript warnings
 
 3. **Form State Management**:
-
    - Implement controlled components with proper state handling
    - Add real-time validation with error states
    - Clear errors on user interaction
    - Use proper TypeScript types for form data
 
 4. **Accessibility Requirements**:
-
    - Include `required` prop for mandatory fields
    - Provide `error` and `helperText` for validation feedback
    - Ensure proper ARIA attributes
@@ -153,12 +145,12 @@ Simplified alternative to MUI's `OverridableComponent` + `TypeMap` — no `TypeM
 // types.ts — shared, reusable across all components
 export type OverridableComponent<
   Props extends { component?: React.ElementType },
-  DefaultComponent extends React.ElementType = 'button',
+  DefaultComponent extends React.ElementType = "button",
 > = <C extends React.ElementType = DefaultComponent>(
-  props: Omit<Props, 'component'> &
+  props: Omit<Props, "component"> &
     Omit<React.ComponentPropsWithoutRef<C>, keyof Props> & {
       component?: C;
-    } & React.RefAttributes<React.ElementRef<C>>
+    } & React.RefAttributes<React.ElementRef<C>>,
 ) => React.JSX.Element;
 ```
 
@@ -199,9 +191,9 @@ return <StyledRoot ref={ref} as={component} {...props}>{children}</StyledRoot>;
 Use `Pick<Props, ...>` for styled component's `ownerState` typing (no separate OwnProps interface).
 
 Key rules:
+
 - Never `React.forwardRef<any, any>` — always use the default component's HTMLElement + props
 - `ref` type auto-derives from `component` (e.g. `HTMLAnchorElement` for `Link`)
-
 
 ## Mockup images or videos
 

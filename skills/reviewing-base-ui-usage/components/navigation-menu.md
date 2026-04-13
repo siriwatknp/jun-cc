@@ -10,7 +10,7 @@ Import: `import { NavigationMenu } from '@base-ui/react/navigation-menu'`
     <NavigationMenu.Item>
       <NavigationMenu.Trigger>
         Products
-        <NavigationMenu.Icon />                 {/* dropdown indicator */}
+        <NavigationMenu.Icon /> {/* dropdown indicator */}
       </NavigationMenu.Trigger>
       <NavigationMenu.Content>
         <NavigationMenu.Link href="/product-a">Product A</NavigationMenu.Link>
@@ -25,7 +25,7 @@ Import: `import { NavigationMenu } from '@base-ui/react/navigation-menu'`
     <NavigationMenu.Backdrop />
     <NavigationMenu.Positioner>
       <NavigationMenu.Popup>
-        <NavigationMenu.Viewport />             {/* renders active Content here */}
+        <NavigationMenu.Viewport /> {/* renders active Content here */}
         <NavigationMenu.Arrow />
       </NavigationMenu.Popup>
     </NavigationMenu.Positioner>
@@ -55,9 +55,9 @@ Import: `import { NavigationMenu } from '@base-ui/react/navigation-menu'`
 
 ## Disambiguation
 
-| NavigationMenu | Menu | Menubar |
-|----------------|------|---------|
-| Site navigation | Action menu | App menu bar |
-| Hover-based | Click-based | Click-based |
-| Contains Links | Contains Items | Contains Menus |
-| Mega menu support | Submenus | Multiple menus |
+| NavigationMenu    | Menu           | Menubar        |
+| ----------------- | -------------- | -------------- |
+| Site navigation   | Action menu    | App menu bar   |
+| Hover-based       | Click-based    | Click-based    |
+| Contains Links    | Contains Items | Contains Menus |
+| Mega menu support | Submenus       | Multiple menus |

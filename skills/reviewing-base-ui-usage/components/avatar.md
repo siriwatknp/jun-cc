@@ -7,7 +7,8 @@ Import: `import { Avatar } from '@base-ui/react/avatar'`
 ```jsx
 <Avatar.Root>
   <Avatar.Image src="/photo.jpg" alt="User name" />
-  <Avatar.Fallback>JD</Avatar.Fallback>        {/* shown on load error or while loading */}
+  <Avatar.Fallback>JD</Avatar.Fallback>{" "}
+  {/* shown on load error or while loading */}
 </Avatar.Root>
 ```
 

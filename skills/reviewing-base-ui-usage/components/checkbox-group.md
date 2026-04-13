@@ -7,9 +7,13 @@ Import: `import { CheckboxGroup } from '@base-ui/react/checkbox-group'`
 ```jsx
 <Fieldset.Root>
   <Fieldset.Legend>Select features</Fieldset.Legend>
-  <CheckboxGroup>                               {/* not namespaced */}
+  <CheckboxGroup>
+    {" "}
+    {/* not namespaced */}
     <Field.Item>
-      <Checkbox.Root value="dark">             {/* value required */}
+      <Checkbox.Root value="dark">
+        {" "}
+        {/* value required */}
         <Checkbox.Indicator />
       </Checkbox.Root>
       <Field.Label>Dark mode</Field.Label>

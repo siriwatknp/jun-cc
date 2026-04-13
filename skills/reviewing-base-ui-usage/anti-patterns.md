@@ -6,11 +6,11 @@ Generic mistakes applicable across all Base UI components. Component-specific er
 
 ```tsx
 // ❌ Wrong import paths
-import { Button } from '@mui/base';
-import { Button } from '@base-ui-components/react/button';
+import { Button } from "@mui/base";
+import { Button } from "@base-ui-components/react/button";
 
 // ✅ Correct
-import { Button } from '@base-ui/react/button';
+import { Button } from "@base-ui/react/button";
 ```
 
 ## Render Prop Mistakes
@@ -111,9 +111,9 @@ e.preventBaseUIHandler();
 
 ```tsx
 // ❌ New element every render
-<Button render={<a href="/" />}>Link</Button>
+<Button render={<a href="/" />}>Link</Button>;
 
 // ✅ Stable reference
 const linkEl = <a href="/" />;
-<Button render={linkEl}>Link</Button>
+<Button render={linkEl}>Link</Button>;
 ```

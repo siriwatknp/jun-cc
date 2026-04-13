@@ -5,6 +5,7 @@ Guide for styling Base UI components and implementing animations.
 ## Styling Approaches
 
 Base UI components are unstyled and compatible with any styling solution:
+
 - Tailwind CSS
 - CSS Modules
 - CSS-in-JS (Emotion, styled-components)
@@ -67,6 +68,7 @@ Popup components expose CSS variables for sizing:
 ```
 
 Common CSS variables:
+
 - `--available-height` - Available viewport height
 - `--available-width` - Available viewport width
 - `--anchor-width` - Width of anchor element
@@ -82,7 +84,9 @@ Use `[data-starting-style]` and `[data-ending-style]` for smooth transitions:
 ```css
 .Popup {
   transform-origin: var(--transform-origin);
-  transition: transform 150ms, opacity 150ms;
+  transition:
+    transform 150ms,
+    opacity 150ms;
 
   &[data-starting-style],
   &[data-ending-style] {
@@ -100,13 +104,25 @@ Use `[data-open]` and `[data-closed]` for keyframe animations:
 
 ```css
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes scaleOut {
-  from { opacity: 1; transform: scale(1); }
-  to { opacity: 0; transform: scale(0.9); }
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
 }
 
 .Popup[data-open] {
@@ -156,6 +172,7 @@ function AnimatedPopover() {
 ```
 
 Key points:
+
 - Make component controlled with `open` prop
 - Add `keepMounted` to Portal
 - Use `render` prop with `motion.div`
@@ -173,7 +190,7 @@ For components with `keepMounted` that stay in DOM:
       <Popover.Popup
         render={(props, state) => (
           <motion.div
-            {...(props as HTMLMotionProps<'div'>)}
+            {...(props as HTMLMotionProps<"div">)}
             initial={false}
             animate={{
               opacity: state.open ? 1 : 0,
@@ -190,6 +207,7 @@ For components with `keepMounted` that stay in DOM:
 ```
 
 Key points:
+
 - No `AnimatePresence` needed
 - Use callback render prop to access `state.open`
 - Animate based on state
@@ -214,7 +232,7 @@ const actionsRef = useRef(null);
       />
     }
   />
-</Popover.Root>
+</Popover.Root>;
 ```
 
 ## Common Review Points
@@ -222,6 +240,7 @@ const actionsRef = useRef(null);
 ### Styling Issues to Flag
 
 1. **Not using state functions when needed:**
+
 ```tsx
 // ❌ Doesn't respond to state changes
 <Button className="my-button" disabled={loading} />
@@ -231,6 +250,7 @@ const actionsRef = useRef(null);
 ```
 
 2. **Missing data attribute selectors:**
+
 ```tsx
 // ❌ Manual class toggling
 <Dialog.Popup className={isOpen ? 'open' : 'closed'} />
@@ -241,6 +261,7 @@ const actionsRef = useRef(null);
 ```
 
 3. **Not using CSS variables:**
+
 ```tsx
 // ❌ Hardcoded max-height
 .Popup { max-height: 400px; }
@@ -252,19 +273,25 @@ const actionsRef = useRef(null);
 ### Animation Issues to Flag
 
 1. **Using CSS animations instead of transitions:**
+
 ```css
 /* ❌ Can't cancel mid-animation */
-.Popup[data-open] { animation: fadeIn 200ms; }
+.Popup[data-open] {
+  animation: fadeIn 200ms;
+}
 
 /* ✅ Smooth cancellation */
 .Popup {
   transition: opacity 200ms;
   &[data-starting-style],
-  &[data-ending-style] { opacity: 0; }
+  &[data-ending-style] {
+    opacity: 0;
+  }
 }
 ```
 
 2. **Missing keepMounted for Motion animations:**
+
 ```tsx
 // ❌ Exit animation won't play
 <AnimatePresence>
@@ -286,11 +313,18 @@ const actionsRef = useRef(null);
 ```
 
 3. **Wrong data attributes for animation state:**
+
 ```css
 /* ❌ Not for animation */
-[data-open] { display: block; }
+[data-open] {
+  display: block;
+}
 
 /* ✅ For transitions */
-[data-starting-style] { opacity: 0; }
-[data-ending-style] { opacity: 0; }
+[data-starting-style] {
+  opacity: 0;
+}
+[data-ending-style] {
+  opacity: 0;
+}
 ```

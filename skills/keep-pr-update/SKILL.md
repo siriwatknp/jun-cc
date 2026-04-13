@@ -66,26 +66,33 @@ If the merge in step 5 succeeds with no conflicts, skip to step 7.
 If conflicts occur:
 
 1. **Abort** the failed merge:
+
    ```bash
    git merge --abort
    ```
 
 2. **Save PR commits** — identify commits unique to this PR:
+
    ```bash
    git log --oneline <remote>/<baseRefName>..HEAD
    ```
+
    Note the commit range.
 
 3. **Force-merge accepting all incoming changes** — this creates a clean merge point:
+
    ```bash
    git merge <remote>/<baseRefName> --no-edit -X theirs
    ```
 
 4. **Cherry-pick PR commits on top** — reapply the PR's own changes:
+
    ```bash
    git cherry-pick <oldest-pr-commit>^..<newest-pr-commit>
    ```
+
    If cherry-pick conflicts occur, resolve by keeping the cherry-picked (PR) changes:
+
    ```bash
    git checkout --theirs .
    git add .
@@ -105,6 +112,7 @@ git push --force-with-lease
 ### 8. Report
 
 Summarize:
+
 - PR purpose (from step 2)
 - Whether conflicts were encountered and how they were resolved
 - Final state of the branch

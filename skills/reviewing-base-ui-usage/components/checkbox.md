@@ -7,7 +7,7 @@ Import: `import { Checkbox } from '@base-ui/react/checkbox'`
 ```jsx
 <Field.Root>
   <Checkbox.Root>
-    <Checkbox.Indicator />          {/* visual check mark */}
+    <Checkbox.Indicator /> {/* visual check mark */}
   </Checkbox.Root>
   <Field.Label>Accept terms</Field.Label>
 </Field.Root>

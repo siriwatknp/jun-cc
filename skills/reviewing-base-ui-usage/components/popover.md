@@ -8,10 +8,12 @@ Import: `import { Popover } from '@base-ui/react/popover'`
 <Popover.Root>
   <Popover.Trigger>Info</Popover.Trigger>
   <Popover.Portal>
-    <Popover.Backdrop />                        {/* optional */}
+    <Popover.Backdrop /> {/* optional */}
     <Popover.Positioner>
       <Popover.Popup>
-        <Popover.Viewport>                      {/* optional, for direction-aware animations */}
+        <Popover.Viewport>
+          {" "}
+          {/* optional, for direction-aware animations */}
           <Popover.Arrow />
           <Popover.Title>Details</Popover.Title>
           <Popover.Description>...</Popover.Description>
@@ -43,9 +45,9 @@ Import: `import { Popover } from '@base-ui/react/popover'`
 
 ## Disambiguation
 
-| Popover | Tooltip | PreviewCard |
-|---------|---------|-------------|
-| Click-triggered (default) | Hover/focus text | Hover-triggered rich preview |
-| Interactive content | Non-interactive text | Interactive content |
-| Has Close button | Auto-dismiss | Auto-dismiss + hover |
-| `openOnHover` optional | Always hover | Always hover |
+| Popover                   | Tooltip              | PreviewCard                  |
+| ------------------------- | -------------------- | ---------------------------- |
+| Click-triggered (default) | Hover/focus text     | Hover-triggered rich preview |
+| Interactive content       | Non-interactive text | Interactive content          |
+| Has Close button          | Auto-dismiss         | Auto-dismiss + hover         |
+| `openOnHover` optional    | Always hover         | Always hover                 |

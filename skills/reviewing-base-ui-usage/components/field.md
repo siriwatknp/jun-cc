@@ -15,6 +15,7 @@ Import: `import { Field } from '@base-ui/react/field'`
 ```
 
 For checkbox/radio groups:
+
 ```jsx
 <Field.Item>
   <Checkbox.Root value="a">

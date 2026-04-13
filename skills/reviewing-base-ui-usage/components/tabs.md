@@ -7,11 +7,11 @@ Import: `import { Tabs } from '@base-ui/react/tabs'`
 ```jsx
 <Tabs.Root defaultValue="one">
   <Tabs.List>
-    <Tabs.Tab value="one">Tab 1</Tabs.Tab>    {/* value required */}
+    <Tabs.Tab value="one">Tab 1</Tabs.Tab> {/* value required */}
     <Tabs.Tab value="two">Tab 2</Tabs.Tab>
-    <Tabs.Indicator />                          {/* optional animated indicator */}
+    <Tabs.Indicator /> {/* optional animated indicator */}
   </Tabs.List>
-  <Tabs.Panel value="one">Content 1</Tabs.Panel>  {/* value must match Tab */}
+  <Tabs.Panel value="one">Content 1</Tabs.Panel> {/* value must match Tab */}
   <Tabs.Panel value="two">Content 2</Tabs.Panel>
 </Tabs.Root>
 ```

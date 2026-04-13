@@ -9,9 +9,11 @@ Import: `import { Dialog } from '@base-ui/react/dialog'`
   <Dialog.Trigger>Open</Dialog.Trigger>
   <Dialog.Portal>
     <Dialog.Backdrop />
-    <Dialog.Viewport>                           {/* positioning container */}
+    <Dialog.Viewport>
+      {" "}
+      {/* positioning container */}
       <Dialog.Popup>
-        <Dialog.Title>Title</Dialog.Title>      {/* required for a11y */}
+        <Dialog.Title>Title</Dialog.Title> {/* required for a11y */}
         <Dialog.Description>...</Dialog.Description>
         <Dialog.Close>Close</Dialog.Close>
       </Dialog.Popup>
@@ -21,6 +23,7 @@ Import: `import { Dialog } from '@base-ui/react/dialog'`
 ```
 
 Detached trigger (trigger outside Root):
+
 ```jsx
 const handle = Dialog.createHandle();
 <Dialog.Trigger handle={handle}>Open</Dialog.Trigger>
@@ -51,8 +54,8 @@ const handle = Dialog.createHandle();
 
 ## Disambiguation
 
-| Dialog | AlertDialog |
-|--------|-------------|
-| General modal | Destructive confirmation |
+| Dialog                       | AlertDialog                      |
+| ---------------------------- | -------------------------------- |
+| General modal                | Destructive confirmation         |
 | Dismissible by click outside | NOT dismissible by click outside |
-| `role="dialog"` | `role="alertdialog"` |
+| `role="dialog"`              | `role="alertdialog"`             |

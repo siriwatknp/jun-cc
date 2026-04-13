@@ -5,13 +5,17 @@ Import: `import { Fieldset } from '@base-ui/react/fieldset'`
 ## Structure
 
 ```jsx
-<Fieldset.Root>                                 {/* renders <fieldset> */}
-  <Fieldset.Legend>Contact Info</Fieldset.Legend>{/* renders <legend> */}
+<Fieldset.Root>
+  {" "}
+  {/* renders <fieldset> */}
+  <Fieldset.Legend>Contact Info</Fieldset.Legend>
+  {/* renders <legend> */}
   {/* Field components */}
 </Fieldset.Root>
 ```
 
 Merge with RadioGroup/CheckboxGroup:
+
 ```jsx
 <Fieldset.Root render={<RadioGroup />}>
   <Fieldset.Legend>Size</Fieldset.Legend>

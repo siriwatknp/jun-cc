@@ -6,7 +6,7 @@ Import: `import { Autocomplete } from '@base-ui/react/autocomplete'`
 
 ```jsx
 <Autocomplete.Root>
-  <Autocomplete.Value />                        {/* selected value display */}
+  <Autocomplete.Value /> {/* selected value display */}
   <Autocomplete.Input />
   <Autocomplete.Trigger>
     <Autocomplete.Icon />
@@ -54,8 +54,8 @@ Import: `import { Autocomplete } from '@base-ui/react/autocomplete'`
 
 ## Disambiguation
 
-| Autocomplete | Combobox | Select |
-|-------------|----------|--------|
-| Free text + suggestions | Filter + restricted pick | Pick only |
-| Allows arbitrary input | Items from list only | Items from list only |
-| Search/suggest pattern | Dropdown filter pattern | Simple dropdown |
+| Autocomplete            | Combobox                 | Select               |
+| ----------------------- | ------------------------ | -------------------- |
+| Free text + suggestions | Filter + restricted pick | Pick only            |
+| Allows arbitrary input  | Items from list only     | Items from list only |
+| Search/suggest pattern  | Dropdown filter pattern  | Simple dropdown      |

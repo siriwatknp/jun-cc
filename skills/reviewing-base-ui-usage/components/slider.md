@@ -6,10 +6,12 @@ Import: `import { Slider } from '@base-ui/react/slider'`
 
 ```jsx
 <Slider.Root defaultValue={50}>
-  <Slider.Value />                              {/* optional value display */}
-  <Slider.Control>                              {/* interactive area */}
+  <Slider.Value /> {/* optional value display */}
+  <Slider.Control>
+    {" "}
+    {/* interactive area */}
     <Slider.Track>
-      <Slider.Indicator />                      {/* filled portion */}
+      <Slider.Indicator /> {/* filled portion */}
       <Slider.Thumb />
     </Slider.Track>
   </Slider.Control>
@@ -17,12 +19,13 @@ Import: `import { Slider } from '@base-ui/react/slider'`
 ```
 
 Range slider:
+
 ```jsx
 <Slider.Root defaultValue={[20, 80]}>
   <Slider.Control>
     <Slider.Track>
       <Slider.Indicator />
-      <Slider.Thumb index={0} />                {/* index required for SSR */}
+      <Slider.Thumb index={0} /> {/* index required for SSR */}
       <Slider.Thumb index={1} />
     </Slider.Track>
   </Slider.Control>

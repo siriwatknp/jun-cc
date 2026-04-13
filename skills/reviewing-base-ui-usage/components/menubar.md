@@ -5,7 +5,9 @@ Import: `import { Menubar } from '@base-ui/react/menubar'`
 ## Structure
 
 ```jsx
-<Menubar>                                       {/* not namespaced */}
+<Menubar>
+  {" "}
+  {/* not namespaced */}
   <Menu.Root>
     <Menu.Trigger>File</Menu.Trigger>
     <Menu.Portal>
@@ -49,8 +51,8 @@ Import: `import { Menubar } from '@base-ui/react/menubar'`
 
 ## Disambiguation
 
-| Menubar | NavigationMenu | Menu |
-|---------|----------------|------|
+| Menubar                      | NavigationMenu          | Menu               |
+| ---------------------------- | ----------------------- | ------------------ |
 | App menu bar (File, Edit...) | Site nav with dropdowns | Single action menu |
-| Multiple Menu.Root children | Links + Content | One menu |
-| Arrow keys between menus | Hover-based | Click-based |
+| Multiple Menu.Root children  | Links + Content         | One menu           |
+| Arrow keys between menus     | Hover-based             | Click-based        |

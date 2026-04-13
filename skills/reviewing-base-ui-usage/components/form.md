@@ -5,7 +5,9 @@ Import: `import { Form } from '@base-ui/react/form'`
 ## Structure
 
 ```jsx
-<Form onSubmit={handleSubmit}>                  {/* not namespaced */}
+<Form onSubmit={handleSubmit}>
+  {" "}
+  {/* not namespaced */}
   <Field.Root name="email">
     <Field.Label>Email</Field.Label>
     <Field.Control type="email" required />

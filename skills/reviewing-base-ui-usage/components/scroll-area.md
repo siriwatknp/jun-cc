@@ -7,17 +7,21 @@ Import: `import { ScrollArea } from '@base-ui/react/scroll-area'`
 ```jsx
 <ScrollArea.Root>
   <ScrollArea.Viewport>
-    <ScrollArea.Content>                        {/* optional, for auto-sizing */}
+    <ScrollArea.Content>
+      {" "}
+      {/* optional, for auto-sizing */}
       {/* scrollable content */}
     </ScrollArea.Content>
   </ScrollArea.Viewport>
-  <ScrollArea.Scrollbar orientation="vertical"> {/* orientation required */}
+  <ScrollArea.Scrollbar orientation="vertical">
+    {" "}
+    {/* orientation required */}
     <ScrollArea.Thumb />
   </ScrollArea.Scrollbar>
   <ScrollArea.Scrollbar orientation="horizontal">
     <ScrollArea.Thumb />
   </ScrollArea.Scrollbar>
-  <ScrollArea.Corner />                         {/* when both scrollbars visible */}
+  <ScrollArea.Corner /> {/* when both scrollbars visible */}
 </ScrollArea.Root>
 ```
 

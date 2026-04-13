@@ -26,9 +26,9 @@ Not namespaced. When inside `ToggleGroup`, needs `value` prop.
 
 ## Disambiguation
 
-| Toggle | Switch | Checkbox |
-|--------|--------|----------|
-| Toolbar/mode buttons | Settings on/off | Form selections |
-| `pressed` state | `checked` state | `checked` state |
-| `aria-pressed` | `role="switch"` | `role="checkbox"` |
-| Not for forms | Immediate effect | Form submission |
+| Toggle               | Switch           | Checkbox          |
+| -------------------- | ---------------- | ----------------- |
+| Toolbar/mode buttons | Settings on/off  | Form selections   |
+| `pressed` state      | `checked` state  | `checked` state   |
+| `aria-pressed`       | `role="switch"`  | `role="checkbox"` |
+| Not for forms        | Immediate effect | Form submission   |

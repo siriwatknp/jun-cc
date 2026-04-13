@@ -6,14 +6,18 @@ Import: `import { PreviewCard } from '@base-ui/react/preview-card'`
 
 ```jsx
 <PreviewCard.Root>
-  <PreviewCard.Trigger href="/profile">         {/* renders as link */}
+  <PreviewCard.Trigger href="/profile">
+    {" "}
+    {/* renders as link */}
     @username
   </PreviewCard.Trigger>
   <PreviewCard.Portal>
-    <PreviewCard.Backdrop />                    {/* optional */}
+    <PreviewCard.Backdrop /> {/* optional */}
     <PreviewCard.Positioner>
       <PreviewCard.Popup>
-        <PreviewCard.Viewport>                  {/* optional, direction-aware animations */}
+        <PreviewCard.Viewport>
+          {" "}
+          {/* optional, direction-aware animations */}
           <PreviewCard.Arrow />
           <img src="/avatar.jpg" />
           <p>Profile info...</p>
@@ -44,9 +48,9 @@ Import: `import { PreviewCard } from '@base-ui/react/preview-card'`
 
 ## Disambiguation
 
-| PreviewCard | Tooltip | Popover |
-|-------------|---------|---------|
-| Hover + rich preview | Hover + text only | Click-triggered |
-| Link trigger | Any trigger | Button trigger |
-| Rich content OK | Text only | Interactive content |
-| Auto-dismiss on leave | Auto-dismiss | Manual close |
+| PreviewCard           | Tooltip           | Popover             |
+| --------------------- | ----------------- | ------------------- |
+| Hover + rich preview  | Hover + text only | Click-triggered     |
+| Link trigger          | Any trigger       | Button trigger      |
+| Rich content OK       | Text only         | Interactive content |
+| Auto-dismiss on leave | Auto-dismiss      | Manual close        |

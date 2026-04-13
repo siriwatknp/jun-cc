@@ -6,8 +6,12 @@ Import: `import { Accordion } from '@base-ui/react/accordion'`
 
 ```jsx
 <Accordion.Root>
-  <Accordion.Item value="section1">   {/* value required */}
-    <Accordion.Header>                {/* required wrapper */}
+  <Accordion.Item value="section1">
+    {" "}
+    {/* value required */}
+    <Accordion.Header>
+      {" "}
+      {/* required wrapper */}
       <Accordion.Trigger />
     </Accordion.Header>
     <Accordion.Panel />
@@ -31,8 +35,8 @@ Import: `import { Accordion } from '@base-ui/react/accordion'`
 
 ## Disambiguation
 
-| Accordion | Collapsible |
-|-----------|-------------|
-| Multiple sections | Single section |
+| Accordion                      | Collapsible          |
+| ------------------------------ | -------------------- |
+| Multiple sections              | Single section       |
 | Requires Item + Header + value | No Item/Header/value |
-| `multiple` controls behavior | Always single toggle |
+| `multiple` controls behavior   | Always single toggle |

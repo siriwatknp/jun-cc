@@ -1,6 +1,7 @@
 # RadioGroup & Radio
 
 Import:
+
 ```
 import { RadioGroup } from '@base-ui/react/radio-group'
 import { Radio } from '@base-ui/react/radio'
@@ -11,9 +12,13 @@ import { Radio } from '@base-ui/react/radio'
 ```jsx
 <Fieldset.Root>
   <Fieldset.Legend>Choose size</Fieldset.Legend>
-  <RadioGroup>                                  {/* not namespaced */}
+  <RadioGroup>
+    {" "}
+    {/* not namespaced */}
     <Field.Item>
-      <Radio.Root value="small">               {/* value required */}
+      <Radio.Root value="small">
+        {" "}
+        {/* value required */}
         <Radio.Indicator />
       </Radio.Root>
       <Field.Label>Small</Field.Label>

@@ -112,24 +112,26 @@ All agents share the same worktree. The execution mode depends on the `--central
 
 #### CI check definitions
 
-| Agent | Name | Commands | Auto-fixable? |
-|-------|------|----------|---------------|
-| 1 | `test_static` | a. `pnpm deduplicate` (only if PR changes any `package.json`)<br>b. `pnpm prettier`<br>c. `pnpm proptypes`<br>d. `pnpm docs:api`<br>e. `pnpm docs:i18n`<br>f. `pnpm extract-error-codes` | Yes (commands regenerate files) |
-| 2 | `test_types` | a. `pnpm docs:typescript:formatted`<br>b. `pnpm typescript:ci`<br>c. `pnpm typescript:module-augmentation` | Partially (a regenerates files, b-c are checks) |
-| 3 | `test_lint` | a. `pnpm eslint --fix`<br>b. `pnpm stylelint --fix`<br>c. `pnpm markdownlint --fix` | Yes (--fix auto-corrects) |
-| 4 | `test_unit` | a. `pnpm test:node --no-isolate --no-file-parallelism` | No (needs code fixes) |
-| 5 | `test_browser` | a. `pnpm test:browser --no-isolate --no-file-parallelism`<br>Requires Playwright. If not installed, skip and report. | No (needs code fixes) |
+| Agent | Name           | Commands                                                                                                                                                                                 | Auto-fixable?                                   |
+| ----- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| 1     | `test_static`  | a. `pnpm deduplicate` (only if PR changes any `package.json`)<br>b. `pnpm prettier`<br>c. `pnpm proptypes`<br>d. `pnpm docs:api`<br>e. `pnpm docs:i18n`<br>f. `pnpm extract-error-codes` | Yes (commands regenerate files)                 |
+| 2     | `test_types`   | a. `pnpm docs:typescript:formatted`<br>b. `pnpm typescript:ci`<br>c. `pnpm typescript:module-augmentation`                                                                               | Partially (a regenerates files, b-c are checks) |
+| 3     | `test_lint`    | a. `pnpm eslint --fix`<br>b. `pnpm stylelint --fix`<br>c. `pnpm markdownlint --fix`                                                                                                      | Yes (--fix auto-corrects)                       |
+| 4     | `test_unit`    | a. `pnpm test:node --no-isolate --no-file-parallelism`                                                                                                                                   | No (needs code fixes)                           |
+| 5     | `test_browser` | a. `pnpm test:browser --no-isolate --no-file-parallelism`<br>Requires Playwright. If not installed, skip and report.                                                                     | No (needs code fixes)                           |
 
 #### Phased mode (default)
 
 Run in two phases to avoid file conflicts between agents.
 
 **Phase 1** — Launch agents 1-3 (`test_static`, `test_types`, `test_lint`) in parallel.
+
 - Each agent runs its commands, checks `git diff` after each command, and reports changes.
 - If a check command fails (e.g. `typescript:ci`), the agent analyzes the error and fixes it, then re-runs the failing command to verify.
 - Each agent loops until all its checks pass (max 3 retries).
 
 **Phase 2** — After phase 1 completes and changes are committed, launch agents 4-5 (`test_unit`, `test_browser`) in parallel.
+
 - Each agent runs tests, and if they fail, analyzes failures and fixes them (e.g. update snapshots, fix assertions, adjust test expectations to match PR changes).
 - Each agent loops until tests pass (max 3 retries).
 
@@ -138,11 +140,13 @@ Run in two phases to avoid file conflicts between agents.
 All 5 agents run in parallel but **only report failures** — they do NOT edit any files.
 
 Each agent should report:
+
 - Which commands failed
 - Full error output
 - Which files are likely involved
 
 After all agents complete, the **main agent**:
+
 1. Analyzes all reported failures together
 2. Fixes all issues (single writer, no conflicts)
 3. Re-dispatches only the failed agents to verify fixes

@@ -7,9 +7,9 @@ Import: `import { Meter } from '@base-ui/react/meter'`
 ```jsx
 <Meter.Root value={60} low={25} high={75} optimum={50}>
   <Meter.Label>Disk usage</Meter.Label>
-  <Meter.Value />                               {/* displays formatted value */}
+  <Meter.Value /> {/* displays formatted value */}
   <Meter.Track>
-    <Meter.Indicator />                         {/* filled portion */}
+    <Meter.Indicator /> {/* filled portion */}
   </Meter.Track>
 </Meter.Root>
 ```
@@ -30,9 +30,9 @@ Import: `import { Meter } from '@base-ui/react/meter'`
 
 ## Disambiguation
 
-| Meter | Progress |
-|-------|----------|
-| Static measurement | Task completion |
-| Has low/high/optimum | No thresholds |
-| Disk space, battery | File upload, loading |
-| May fluctuate | Moves toward done |
+| Meter                | Progress             |
+| -------------------- | -------------------- |
+| Static measurement   | Task completion      |
+| Has low/high/optimum | No thresholds        |
+| Disk space, battery  | File upload, loading |
+| May fluctuate        | Moves toward done    |

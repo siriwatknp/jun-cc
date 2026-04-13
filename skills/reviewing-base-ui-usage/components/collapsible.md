@@ -7,9 +7,7 @@ Import: `import { Collapsible } from '@base-ui/react/collapsible'`
 ```jsx
 <Collapsible.Root>
   <Collapsible.Trigger>Show more</Collapsible.Trigger>
-  <Collapsible.Panel>
-    Content that can be shown/hidden
-  </Collapsible.Panel>
+  <Collapsible.Panel>Content that can be shown/hidden</Collapsible.Panel>
 </Collapsible.Root>
 ```
 
@@ -29,8 +27,8 @@ Import: `import { Collapsible } from '@base-ui/react/collapsible'`
 
 ## Disambiguation
 
-| Collapsible | Accordion |
-|-------------|-----------|
-| Single section | Multiple sections |
+| Collapsible          | Accordion                      |
+| -------------------- | ------------------------------ |
+| Single section       | Multiple sections              |
 | No Item/Header/value | Requires Item + Header + value |
-| Independent toggle | Coordinated open/close |
+| Independent toggle   | Coordinated open/close         |

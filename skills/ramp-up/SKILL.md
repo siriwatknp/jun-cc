@@ -27,6 +27,7 @@ Detect if the repo is a fork: check if an `upstream` remote exists (`git remote 
 Store this as `$BASE` for all subsequent commands.
 
 Run these in parallel:
+
 - `git branch --show-current` — confirm we're on a working branch (not main/master)
 - `git log $BASE..HEAD --oneline` — list of commits on this branch
 - `gh pr view --json title,body,url,state,baseRefName,headRefName,statusCheckRollup,labels,milestone` — get PR metadata if one exists

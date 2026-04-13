@@ -6,12 +6,14 @@ Import: `import { Combobox } from '@base-ui/react/combobox'`
 
 ```jsx
 <Combobox.Root>
-  <Combobox.Value />                            {/* selected value display */}
+  <Combobox.Value /> {/* selected value display */}
   <Combobox.Input />
-  <Combobox.Trigger>                            {/* optional toggle button */}
+  <Combobox.Trigger>
+    {" "}
+    {/* optional toggle button */}
     <Combobox.Icon />
   </Combobox.Trigger>
-  <Combobox.Clear />                            {/* optional clear button */}
+  <Combobox.Clear /> {/* optional clear button */}
   <Combobox.Portal>
     <Combobox.Backdrop />
     <Combobox.Positioner>
@@ -31,11 +33,12 @@ Import: `import { Combobox } from '@base-ui/react/combobox'`
       </Combobox.Popup>
     </Combobox.Positioner>
   </Combobox.Portal>
-  <Combobox.Status />                           {/* screen reader announcements */}
+  <Combobox.Status /> {/* screen reader announcements */}
 </Combobox.Root>
 ```
 
 Multi-select with chips:
+
 ```jsx
 <Combobox.Root multiple>
   <Combobox.Chips>
@@ -73,8 +76,8 @@ Multi-select with chips:
 
 ## Disambiguation
 
-| Combobox | Autocomplete | Select |
-|----------|-------------|--------|
-| Filter + pick (restricted) | Filter + free text | Pick only (no filter) |
-| Items from list only | Allows arbitrary input | Items from list only |
-| Has Input + dropdown | Has Input + dropdown | Trigger + dropdown |
+| Combobox                   | Autocomplete           | Select                |
+| -------------------------- | ---------------------- | --------------------- |
+| Filter + pick (restricted) | Filter + free text     | Pick only (no filter) |
+| Items from list only       | Allows arbitrary input | Items from list only  |
+| Has Input + dropdown       | Has Input + dropdown   | Trigger + dropdown    |

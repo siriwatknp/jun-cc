@@ -9,7 +9,9 @@ Import: `import { AlertDialog } from '@base-ui/react/alert-dialog'`
   <AlertDialog.Trigger>Delete</AlertDialog.Trigger>
   <AlertDialog.Portal>
     <AlertDialog.Backdrop />
-    <AlertDialog.Viewport>                      {/* positioning container */}
+    <AlertDialog.Viewport>
+      {" "}
+      {/* positioning container */}
       <AlertDialog.Popup>
         <AlertDialog.Title>Confirm</AlertDialog.Title>
         <AlertDialog.Description>Are you sure?</AlertDialog.Description>
@@ -40,8 +42,8 @@ Import: `import { AlertDialog } from '@base-ui/react/alert-dialog'`
 
 ## Disambiguation
 
-| AlertDialog | Dialog |
-|-------------|--------|
-| Destructive/critical confirmation | General modal |
-| NOT dismissible by outside click | Dismissible by outside click |
-| `role="alertdialog"` | `role="dialog"` |
+| AlertDialog                       | Dialog                       |
+| --------------------------------- | ---------------------------- |
+| Destructive/critical confirmation | General modal                |
+| NOT dismissible by outside click  | Dismissible by outside click |
+| `role="alertdialog"`              | `role="dialog"`              |

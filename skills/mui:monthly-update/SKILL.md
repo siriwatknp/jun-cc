@@ -91,10 +91,10 @@ The report should be slide-compatible — concise bullets that can be copy-paste
 
 ### Achievement References
 
-| Achievement | PR | Demo / Deploy Preview |
-| ----------- | -- | --------------------- |
+| Achievement                     | PR             | Demo / Deploy Preview         |
+| ------------------------------- | -------------- | ----------------------------- |
 | Feature or contribution summary | [#123](pr-url) | [preview](deploy-preview-url) |
-| Another achievement | [#456](pr-url) | - |
+| Another achievement             | [#456](pr-url) | -                             |
 
 ## Full PR list
 

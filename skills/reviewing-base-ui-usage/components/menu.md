@@ -8,7 +8,7 @@ Import: `import { Menu } from '@base-ui/react/menu'`
 <Menu.Root>
   <Menu.Trigger>Actions</Menu.Trigger>
   <Menu.Portal>
-    <Menu.Backdrop />                           {/* optional */}
+    <Menu.Backdrop /> {/* optional */}
     <Menu.Positioner>
       <Menu.Popup>
         <Menu.Item>Cut</Menu.Item>
@@ -29,6 +29,7 @@ Import: `import { Menu } from '@base-ui/react/menu'`
 ```
 
 Submenu:
+
 ```jsx
 <Menu.SubmenuRoot>
   <Menu.SubmenuTrigger>More →</Menu.SubmenuTrigger>
@@ -64,8 +65,8 @@ Submenu:
 
 ## Disambiguation
 
-| Menu | ContextMenu |
-|------|-------------|
-| Click trigger to open | Right-click trigger to open |
-| `<Menu.Trigger>` is a button | `<ContextMenu.Trigger>` is a region |
-| Has `Menu.Root` | Has `ContextMenu.Root` + `ContextMenu.Trigger` |
+| Menu                         | ContextMenu                                    |
+| ---------------------------- | ---------------------------------------------- |
+| Click trigger to open        | Right-click trigger to open                    |
+| `<Menu.Trigger>` is a button | `<ContextMenu.Trigger>` is a region            |
+| Has `Menu.Root`              | Has `ContextMenu.Root` + `ContextMenu.Trigger` |

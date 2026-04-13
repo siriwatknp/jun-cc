@@ -5,8 +5,10 @@ Import: `import { ToggleGroup } from '@base-ui/react/toggle-group'`
 ## Structure
 
 ```jsx
-<ToggleGroup>                                   {/* not namespaced */}
-  <Toggle value="bold">B</Toggle>              {/* value required */}
+<ToggleGroup>
+  {" "}
+  {/* not namespaced */}
+  <Toggle value="bold">B</Toggle> {/* value required */}
   <Toggle value="italic">I</Toggle>
   <Toggle value="underline">U</Toggle>
 </ToggleGroup>

@@ -42,6 +42,7 @@
       "agent_md": true,
       "skills": [
         "agent-browser",
+        "build-app-layout",
         "conducting-tech-analysis",
         "firebase-ai-logic",
         "firebase-auth-basics",

@@ -5,6 +5,7 @@ Import: `import { Toast } from '@base-ui/react/toast'`
 ## Structure
 
 Setup (app root):
+
 ```jsx
 const toastManager = Toast.createToastManager();
 
@@ -24,13 +25,14 @@ const toastManager = Toast.createToastManager();
       )}
     </Toast.Viewport>
   </Toast.Portal>
-</Toast.Provider>
+</Toast.Provider>;
 ```
 
 Usage:
+
 ```jsx
 const toastManager = Toast.useToastManager();
-toastManager.add({ title: 'Saved', description: 'Changes saved.' });
+toastManager.add({ title: "Saved", description: "Changes saved." });
 ```
 
 ## Gotchas

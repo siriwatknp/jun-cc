@@ -6,11 +6,15 @@ Import: `import { NumberField } from '@base-ui/react/number-field'`
 
 ```jsx
 <NumberField.Root defaultValue={0} min={0} max={100}>
-  <NumberField.ScrubArea>                       {/* optional drag-to-adjust */}
+  <NumberField.ScrubArea>
+    {" "}
+    {/* optional drag-to-adjust */}
     <NumberField.ScrubAreaCursor />
     <label>Amount</label>
   </NumberField.ScrubArea>
-  <NumberField.Group>                           {/* groups input + buttons */}
+  <NumberField.Group>
+    {" "}
+    {/* groups input + buttons */}
     <NumberField.Decrement>−</NumberField.Decrement>
     <NumberField.Input />
     <NumberField.Increment>+</NumberField.Increment>

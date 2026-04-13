@@ -7,9 +7,9 @@ Import: `import { Progress } from '@base-ui/react/progress'`
 ```jsx
 <Progress.Root value={60}>
   <Progress.Label>Loading...</Progress.Label>
-  <Progress.Value />                            {/* displays formatted value */}
+  <Progress.Value /> {/* displays formatted value */}
   <Progress.Track>
-    <Progress.Indicator />                      {/* filled portion */}
+    <Progress.Indicator /> {/* filled portion */}
   </Progress.Track>
 </Progress.Root>
 ```
@@ -30,9 +30,9 @@ Import: `import { Progress } from '@base-ui/react/progress'`
 
 ## Disambiguation
 
-| Progress | Meter |
-|----------|-------|
-| Task completion | Static measurement |
-| Moves toward done | May fluctuate |
-| No thresholds | Has low/high/optimum |
-| File upload, loading | Disk space, battery |
+| Progress             | Meter                |
+| -------------------- | -------------------- |
+| Task completion      | Static measurement   |
+| Moves toward done    | May fluctuate        |
+| No thresholds        | Has low/high/optimum |
+| File upload, loading | Disk space, battery  |

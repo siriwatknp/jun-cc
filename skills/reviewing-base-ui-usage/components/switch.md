@@ -30,8 +30,8 @@ Import: `import { Switch } from '@base-ui/react/switch'`
 
 ## Disambiguation
 
-| Switch | Checkbox | Toggle |
-|--------|----------|--------|
-| Immediate on/off | Form submission | Toolbar/mode buttons |
-| `role="switch"` | `role="checkbox"` | `aria-pressed` |
-| Settings toggles | Agree/select items | Formatting buttons |
+| Switch           | Checkbox           | Toggle               |
+| ---------------- | ------------------ | -------------------- |
+| Immediate on/off | Form submission    | Toolbar/mode buttons |
+| `role="switch"`  | `role="checkbox"`  | `aria-pressed`       |
+| Settings toggles | Agree/select items | Formatting buttons   |

@@ -20,6 +20,7 @@ Replaces the default element with another element. Props are automatically merge
 ```
 
 **Props merging behavior:**
+
 - Event handlers: Both called (component's first, then render element's)
 - className: Concatenated (render element's first)
 - style: Merged (render element's wins on conflict)
@@ -49,7 +50,8 @@ Access component state and full control over rendered element.
 ```
 
 **Critical rule:** Always spread `{...props}` to preserve:
-- Accessibility attributes (aria-*, role)
+
+- Accessibility attributes (aria-\*, role)
 - Event handlers (onClick, onKeyDown, etc.)
 - Data attributes (data-disabled, data-open, etc.)
 - Refs
@@ -82,26 +84,26 @@ Without using render prop, you can still access state:
 
 ## Available State by Component
 
-| Component | State Properties |
-|-----------|-----------------|
-| Button | `disabled` |
-| Dialog.Trigger | `disabled`, `open` |
-| Dialog.Popup | `open`, `nested`, `modal` |
-| Menu.Trigger | `disabled`, `open` |
-| Menu.Item | `disabled`, `highlighted` |
-| Popover.Trigger | `open` |
-| Tooltip.Popup | `open`, `instant` |
-| Select.Trigger | `disabled`, `open`, `valid`, `touched`, `dirty` |
-| Select.Item | `disabled`, `selected`, `highlighted` |
-| Combobox.Input | `open`, `valid`, `touched`, `dirty` |
-| Combobox.Item | `disabled`, `selected`, `highlighted` |
-| Tabs.Tab | `disabled`, `selected` |
-| Accordion.Trigger | `disabled`, `open` |
-| Checkbox.Root | `checked`, `disabled`, `indeterminate` |
-| Switch.Root | `checked`, `disabled` |
-| Slider.Thumb | `disabled`, `dragging`, `index`, `value` |
-| Field.* | `disabled`, `valid`, `touched`, `dirty` |
-| NumberField.* | `disabled`, `valid`, `touched`, `dirty`, `scrubbing` |
+| Component         | State Properties                                     |
+| ----------------- | ---------------------------------------------------- |
+| Button            | `disabled`                                           |
+| Dialog.Trigger    | `disabled`, `open`                                   |
+| Dialog.Popup      | `open`, `nested`, `modal`                            |
+| Menu.Trigger      | `disabled`, `open`                                   |
+| Menu.Item         | `disabled`, `highlighted`                            |
+| Popover.Trigger   | `open`                                               |
+| Tooltip.Popup     | `open`, `instant`                                    |
+| Select.Trigger    | `disabled`, `open`, `valid`, `touched`, `dirty`      |
+| Select.Item       | `disabled`, `selected`, `highlighted`                |
+| Combobox.Input    | `open`, `valid`, `touched`, `dirty`                  |
+| Combobox.Item     | `disabled`, `selected`, `highlighted`                |
+| Tabs.Tab          | `disabled`, `selected`                               |
+| Accordion.Trigger | `disabled`, `open`                                   |
+| Checkbox.Root     | `checked`, `disabled`, `indeterminate`               |
+| Switch.Root       | `checked`, `disabled`                                |
+| Slider.Thumb      | `disabled`, `dragging`, `index`, `value`             |
+| Field.\*          | `disabled`, `valid`, `touched`, `dirty`              |
+| NumberField.\*    | `disabled`, `valid`, `touched`, `dirty`, `scrubbing` |
 
 ## Event Handler Prevention
 
@@ -125,6 +127,7 @@ Prevent Base UI's internal handler while keeping your own:
 ```
 
 **When to use:**
+
 - Override default open/close behavior
 - Add confirmation before action
 - Conditional handling based on state
@@ -135,11 +138,9 @@ Render props can be nested arbitrarily:
 
 ```tsx
 <Tooltip.Root>
-  <Tooltip.Trigger render={
-    <Dialog.Trigger render={
-      <Button render={<a href="#" />} />
-    } />
-  }>
+  <Tooltip.Trigger
+    render={<Dialog.Trigger render={<Button render={<a href="#" />} />} />}
+  >
     Hover for tooltip, click for dialog
   </Tooltip.Trigger>
 </Tooltip.Root>

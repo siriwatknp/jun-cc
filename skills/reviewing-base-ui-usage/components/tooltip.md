@@ -5,15 +5,21 @@ Import: `import { Tooltip } from '@base-ui/react/tooltip'`
 ## Structure
 
 ```jsx
-<Tooltip.Provider>                              {/* optional, coordinates multiple tooltips */}
+<Tooltip.Provider>
+  {" "}
+  {/* optional, coordinates multiple tooltips */}
   <Tooltip.Root>
-    <Tooltip.Trigger aria-label="Settings">     {/* aria-label should match tooltip text */}
+    <Tooltip.Trigger aria-label="Settings">
+      {" "}
+      {/* aria-label should match tooltip text */}
       <SettingsIcon />
     </Tooltip.Trigger>
     <Tooltip.Portal>
       <Tooltip.Positioner>
         <Tooltip.Popup>
-          <Tooltip.Viewport>                    {/* optional, direction-aware animations */}
+          <Tooltip.Viewport>
+            {" "}
+            {/* optional, direction-aware animations */}
             Settings
           </Tooltip.Viewport>
           <Tooltip.Arrow />
@@ -45,9 +51,9 @@ Import: `import { Tooltip } from '@base-ui/react/tooltip'`
 
 ## Disambiguation
 
-| Tooltip | Popover | PreviewCard |
-|---------|---------|-------------|
-| Hover/focus text label | Click + interactive | Hover + rich preview |
-| Non-interactive | Buttons/links OK | Can contain links |
-| `aria-label` required | Self-contained | Link trigger required |
-| Disabled on touch | Works on touch | Works on touch |
+| Tooltip                | Popover             | PreviewCard           |
+| ---------------------- | ------------------- | --------------------- |
+| Hover/focus text label | Click + interactive | Hover + rich preview  |
+| Non-interactive        | Buttons/links OK    | Can contain links     |
+| `aria-label` required  | Self-contained      | Link trigger required |
+| Disabled on touch      | Works on touch      | Works on touch        |

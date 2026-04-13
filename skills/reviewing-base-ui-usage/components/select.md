@@ -11,14 +11,16 @@ Import: `import { Select } from '@base-ui/react/select'`
     <Select.Icon />
   </Select.Trigger>
   <Select.Portal>
-    <Select.Backdrop />                         {/* optional */}
+    <Select.Backdrop /> {/* optional */}
     <Select.Positioner>
       <Select.Popup>
-        <Select.List>                           {/* required wrapper */}
+        <Select.List>
+          {" "}
+          {/* required wrapper */}
           <Select.Group>
             <Select.GroupLabel>Category</Select.GroupLabel>
             <Select.Item value="a">
-              <Select.ItemIndicator />          {/* check mark */}
+              <Select.ItemIndicator /> {/* check mark */}
               <Select.ItemText>Option A</Select.ItemText>
             </Select.Item>
           </Select.Group>
@@ -56,9 +58,9 @@ Import: `import { Select } from '@base-ui/react/select'`
 
 ## Disambiguation
 
-| Select | Combobox |
-|--------|----------|
-| Click to pick from list | Type to filter + pick |
-| No filtering | Built-in filtering |
-| Small to medium lists | Any size list |
-| `alignItemWithTrigger` overlay | Standard positioning |
+| Select                         | Combobox              |
+| ------------------------------ | --------------------- |
+| Click to pick from list        | Type to filter + pick |
+| No filtering                   | Built-in filtering    |
+| Small to medium lists          | Any size list         |
+| `alignItemWithTrigger` overlay | Standard positioning  |

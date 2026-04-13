@@ -6,7 +6,9 @@ Import: `import { ContextMenu } from '@base-ui/react/context-menu'`
 
 ```jsx
 <ContextMenu.Root>
-  <ContextMenu.Trigger>                         {/* right-click region */}
+  <ContextMenu.Trigger>
+    {" "}
+    {/* right-click region */}
     <div>Right-click me</div>
   </ContextMenu.Trigger>
   <ContextMenu.Portal>
@@ -27,6 +29,7 @@ Import: `import { ContextMenu } from '@base-ui/react/context-menu'`
 ```
 
 Submenu:
+
 ```jsx
 <ContextMenu.SubmenuRoot>
   <ContextMenu.SubmenuTrigger>More →</ContextMenu.SubmenuTrigger>

@@ -12,7 +12,7 @@ Import: `import { Toolbar } from '@base-ui/react/toolbar'`
   </Toolbar.Group>
   <Toolbar.Separator />
   <Toolbar.Link href="/help">Help</Toolbar.Link>
-  <Toolbar.Input placeholder="Search..." />     {/* use sparingly */}
+  <Toolbar.Input placeholder="Search..." /> {/* use sparingly */}
 </Toolbar.Root>
 ```
 

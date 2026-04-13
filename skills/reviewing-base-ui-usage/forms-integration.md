@@ -98,8 +98,8 @@ Use native HTML validation attributes:
   validationMode="onChange"
   validationDebounceTime={300}
   validate={async (value) => {
-    if (value === 'admin') {
-      return 'Reserved username';
+    if (value === "admin") {
+      return "Reserved username";
     }
     const available = await checkUsername(value);
     if (!available) {
@@ -166,18 +166,18 @@ const [errors, setErrors] = useState();
     <Field.Control />
     <Field.Error />
   </Field.Root>
-</Form>
+</Form>;
 ```
 
 ## React Hook Form Integration
 
 ```tsx
-import { useForm, Controller } from 'react-hook-form';
-import { Field } from '@base-ui/react/field';
+import { useForm, Controller } from "react-hook-form";
+import { Field } from "@base-ui/react/field";
 
 function MyForm() {
   const { control, handleSubmit } = useForm({
-    defaultValues: { username: '' }
+    defaultValues: { username: "" },
   });
 
   return (
@@ -186,12 +186,12 @@ function MyForm() {
         name="username"
         control={control}
         rules={{
-          required: 'Required',
-          minLength: { value: 3, message: 'Too short' }
+          required: "Required",
+          minLength: { value: 3, message: "Too short" },
         }}
         render={({
           field: { name, ref, value, onBlur, onChange },
-          fieldState: { invalid, isTouched, isDirty, error }
+          fieldState: { invalid, isTouched, isDirty, error },
         }) => (
           <Field.Root
             name={name}
@@ -206,9 +206,7 @@ function MyForm() {
               onValueChange={onChange}
               ref={ref}
             />
-            <Field.Error match={!!error}>
-              {error?.message}
-            </Field.Error>
+            <Field.Error match={!!error}>{error?.message}</Field.Error>
           </Field.Root>
         )}
       />
@@ -220,19 +218,24 @@ function MyForm() {
 ## TanStack Form Integration
 
 ```tsx
-import { useForm } from '@tanstack/react-form';
-import { Field } from '@base-ui/react/field';
+import { useForm } from "@tanstack/react-form";
+import { Field } from "@base-ui/react/field";
 
 function MyForm() {
   const form = useForm({
-    defaultValues: { username: '' },
+    defaultValues: { username: "" },
     onSubmit: async ({ value }) => {
       await submitData(value);
-    }
+    },
   });
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        form.handleSubmit();
+      }}
+    >
       <form.Field
         name="username"
         children={(field) => (
@@ -249,7 +252,7 @@ function MyForm() {
               onBlur={field.handleBlur}
             />
             <Field.Error match={!field.state.meta.isValid}>
-              {field.state.meta.errors.join(', ')}
+              {field.state.meta.errors.join(", ")}
             </Field.Error>
           </Field.Root>
         )}
@@ -264,6 +267,7 @@ function MyForm() {
 ### Accessibility Issues to Flag
 
 1. **Missing Field.Label:**
+
 ```tsx
 // ❌ No accessible label
 <Field.Root>
@@ -278,6 +282,7 @@ function MyForm() {
 ```
 
 2. **Missing Fieldset for groups:**
+
 ```tsx
 // ❌ Group without legend
 <RadioGroup>
@@ -294,6 +299,7 @@ function MyForm() {
 ```
 
 3. **Missing Field.Item for group items:**
+
 ```tsx
 // ❌ Checkboxes without individual labels
 <CheckboxGroup>
@@ -317,6 +323,7 @@ function MyForm() {
 ### Integration Issues to Flag
 
 1. **Not forwarding ref from Controller:**
+
 ```tsx
 // ❌ Focus on error won't work
 <Controller
@@ -337,6 +344,7 @@ function MyForm() {
 ```
 
 2. **Not syncing validation state:**
+
 ```tsx
 // ❌ Base UI doesn't know about validation state
 <Controller
@@ -365,6 +373,7 @@ function MyForm() {
 ```
 
 3. **Using wrong change handler:**
+
 ```tsx
 // ❌ onChange gives event, not value
 <Field.Control onChange={field.onChange} />
