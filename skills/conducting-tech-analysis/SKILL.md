@@ -7,7 +7,7 @@ description: Use this skill to perform technical analysis based on the given req
 
 A research document that outlines the technical analysis based on the given requirements. The research will be used for planning in the next steps of development.
 
-Default a path to `.claude/tasks/<dd-mm-yyyy>-<short-description>/tech-analysis.md` in the current directory if not specified by the user.
+Default a path to `exploration/<dd-mm-yyyy>-<short-description>/tech-analysis.md` in the current directory if not specified by the user.
 
 ## Steps
 
