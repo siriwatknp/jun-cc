@@ -20,7 +20,7 @@ Correctness over speed. Finish tasks right (per spec/plan), not fast but loose.
 
 ## Asking Questions
 
-- Do not ask consecutive questions/confirmations, instead use alphabetical bullets (a, b, c) so that user can refer to the question by letter when answering.
+- Do not ask consecutive questions/confirmations, instead use numeric bullets (1, 2, 3) so that user can refer to the question by number when answering.
 
 For example:
 
@@ -30,9 +30,9 @@ For example:
 ```markdown
 Summary accurate? Next step:
 
-a) No. (Please correct: ...)
-b) Yes -> save to file
-c) Yes -> run /conducting-tech-analysis
+1. No. (Please correct: ...)
+2. Yes -> save to file
+3. Yes -> run /conducting-tech-analysis
 ```
 
 ## Browser Automation
