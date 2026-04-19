@@ -1,6 +1,6 @@
 ---
 name: conducting-tech-analysis
-description: Use this skill to perform technical analysis of requirements — explore the codebase, trace dependencies, and produce a research document structured around testable epics. Trigger when the user says "tech analysis", "feasibility study", "research this", "analyze the codebase for X", "is X possible", or before planning a non-trivial implementation. Use even when the user does not explicitly say "tech analysis" — any time they ask about feasibility, risks, or how to approach a change. This skill stops at epic boundaries; detailed task breakdown belongs in `/planning-research`.
+description: Use this skill to perform technical analysis of requirements — explore the codebase, trace dependencies, and produce a research document structured around testable epics. Trigger when the user says "tech analysis", "feasibility study", "research this", "analyze the codebase for X", "is X possible", or before planning a non-trivial implementation. Use even when the user does not explicitly say "tech analysis" — any time they ask about feasibility, risks, or how to approach a change. This skill stops at epic boundaries; detailed task breakdown belongs in `/writing-implementation-plan`.
 ---
 
 ## Goal
@@ -9,10 +9,10 @@ A research document at `exploration/<dd-mm-yyyy>-<short-description>/tech-analys
 
 - Anchors to the provided requirements (linked or inlined)
 - Surfaces codebase findings, shared dependencies, and risks
-- Splits the work into **self-contained epics**, each ending with concrete **testable outcomes** (verification bullets live inside the epic, not in a separate section)
+- Organizes the work into one or more **self-contained epics** (default: one epic; split only for natural milestones), each ending with concrete **testable outcomes** inside the epic
 - States feasibility and complexity up front
 
-The document feeds into `/planning-research` for detailed task breakdown.
+The document feeds into `/writing-implementation-plan` for detailed task breakdown.
 
 ## Prerequisite: requirements
 
@@ -81,24 +81,26 @@ date: <yyyy-mm-dd>
 
 ## Epics
 
-Each epic is **self-contained** and ends with concrete, observable **testable outcomes**. Nice-to-haves go in the LAST epic.
+Each epic is **self-contained** and ends with concrete, observable **testable outcomes**. **Default to one epic.** Add more only when the work has natural testable milestones that ship or review independently — e.g., spans >1 day, has clean seams, or deploys in stages.
+
+**Testable outcomes are commitments — what you list is what ships.** Do not group bullets as "must-have" vs "nice-to-have". For each nice-to-have from the requirements, make a call: either **include** it (it becomes a regular testable outcome with no special marker) or **drop** it (list it under the epic's `Scope: out` with a one-line reason). The analysis exists to make these calls; leaving them as "maybe later" inside testable outcomes undermines the document's purpose.
 
 ### Epic 1: <name>
 
-- **Scope:** <in / out>
+- **Scope:**
+  - in: <what is being delivered>
+  - out: <what is explicitly excluded — include any requirement nice-to-haves you chose to drop, each with a one-line reason>
 - **Testable outcomes:**
   - <concrete, observable check — grounded in the repo's actual test setup>
   - <another check covering a different verification layer where it applies>
   - <manual / visual check if applicable, or `gap — no <X> harness` if the infra doesn't exist>
 - **Approach:** <high-level direction only — NOT detailed tasks>
 
+<!-- Add Epic 2, 3, … only when justified by milestone seams. Delete this placeholder if one epic is enough. -->
+
 ### Epic 2: <name>
 
 …
-
-### Epic N (nice-to-haves): <name>
-
-<only if nice-to-haves were specified in requirements>
 
 ## Feasibility & complexity
 
@@ -109,13 +111,13 @@ Each epic is **self-contained** and ends with concrete, observable **testable ou
 
 ### Writing testable outcomes
 
-Each bullet under **Testable outcomes** is a concrete, observable check — not a generic category label. Cover the verification layers that actually apply to that epic (unit / integration / manual / visual); skip layers that don't. Ground bullets in the repo's real test setup (framework, conventions, the existing test pattern you'd mirror) — you discovered that in step 2 and should apply it silently. If a layer's harness doesn't exist, write `gap — no <X> harness` instead of inventing coverage.
+Each bullet under **Testable outcomes** is a concrete, observable check that will be verified — not a generic category label, not an optional stretch goal. Cover the verification layers that actually apply to that epic (unit / integration / manual / visual); skip layers that don't. Ground bullets in the repo's real test setup (framework, conventions, the existing test pattern you'd mirror) — you discovered that in step 2 and should apply it silently. If a layer's harness doesn't exist, write `gap — no <X> harness` instead of inventing coverage.
 
 _Why:_ the point of splitting work into epics is to pin each one to a concrete "done" signal. A vague outcome ("persistence works") gives the reader nothing to verify; a concrete one ("reload preserves preference; integration test asserts DOM class matches stored value on mount") is self-checking.
 
 ### Task granularity rule
 
-Epics describe **direction and testable boundaries**, not implementation steps. Do NOT write "edit file X", "add function Y", "update test Z" inside an epic's approach — that level belongs in `/planning-research`. If you catch yourself naming files or functions inside an epic, pull back to the intent. (Testable-outcome bullets may reference existing test-file patterns to mirror, since that's grounding, not a task list.)
+Epics describe **direction and testable boundaries**, not implementation steps. Do NOT write "edit file X", "add function Y", "update test Z" inside an epic's approach — that level belongs in `/writing-implementation-plan`. If you catch yourself naming files or functions inside an epic, pull back to the intent. (Testable-outcome bullets may reference existing test-file patterns to mirror, since that's grounding, not a task list.)
 
 _Why:_ tech analysis decides _what_ work exists and _whether_ it's safe to do. Planning decides _how_ to execute it. Mixing the two bloats the analysis and forces rework when implementation details change.
 
@@ -132,5 +134,5 @@ Analysis accurate? Next:
 
 1. No. (please correct: …)
 2. Yes → refine
-3. Yes → hand off to `/planning-research`
+3. Yes → hand off to `/writing-implementation-plan`
 ```
