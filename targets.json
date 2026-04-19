@@ -16,7 +16,6 @@
         "mui:core-ci-fix",
         "mui:monthly-update",
         "mui:x-ci-fix",
-        "planning-research",
         "ramp-up",
         "reviewing-base-ui-usage",
         "supabase-postgres-best-practices",
@@ -27,6 +26,7 @@
         "web-design-guidelines",
         "working-on-plans",
         "write-mui-pr-details",
+        "writing-implementation-plan",
         "writing-responses-docs"
       ],
       "commands": [
@@ -52,13 +52,13 @@
         "firebase-hosting-basics",
         "firebase-local-env-setup",
         "next-best-practices",
-        "planning-research",
         "understand-doc-system",
         "using-mui-components",
         "vercel-composition-patterns",
         "vercel-react-best-practices",
         "web-design-guidelines",
         "working-on-plans",
+        "writing-implementation-plan",
         "writing-responses-docs"
       ],
       "commands": []
@@ -71,12 +71,12 @@
         "conducting-tech-analysis",
         "find-skills",
         "next-best-practices",
-        "planning-research",
         "using-mui-components",
         "vercel-composition-patterns",
         "vercel-react-best-practices",
         "web-design-guidelines",
-        "working-on-plans"
+        "working-on-plans",
+        "writing-implementation-plan"
       ],
       "commands": []
     },
