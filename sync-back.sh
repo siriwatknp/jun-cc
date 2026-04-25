@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 
 usage() {
   echo "Usage: jun-cc sync-back <path>"
@@ -20,13 +20,39 @@ usage() {
 
 # Resolve to absolute path (strip trailing slash)
 INPUT="${1%/}"
-if [[ -d "$INPUT" ]]; then
-  TARGET_PATH="$(cd "$INPUT" && pwd)"
-elif [[ -f "$INPUT" ]]; then
-  TARGET_PATH="$(cd "$(dirname "$INPUT")" && pwd)/$(basename "$INPUT")"
-else
+if [[ ! -e "$INPUT" ]]; then
   echo "Error: $INPUT does not exist"
   exit 1
+fi
+
+# Logical absolute path (keeps symlinks in the path so /skills/ and
+# /commands/ detection works against the path the user passed in).
+# Physical path follows symlinks — used to detect when the input already
+# lives inside this repo (e.g. a distributed symlink).
+if [[ -d "$INPUT" ]]; then
+  TARGET_PATH="$(cd "$INPUT" && pwd)"
+  TARGET_PATH_PHYS="$(cd "$INPUT" && pwd -P)"
+else
+  parent_log="$(cd "$(dirname "$INPUT")" && pwd)"
+  parent_phys="$(cd "$(dirname "$INPUT")" && pwd -P)"
+  fname="$(basename "$INPUT")"
+  TARGET_PATH="$parent_log/$fname"
+  if [[ -L "$parent_phys/$fname" ]]; then
+    link="$(readlink "$parent_phys/$fname")"
+    [[ "$link" != /* ]] && link="$parent_phys/$link"
+    TARGET_PATH_PHYS="$(cd "$(dirname "$link")" && pwd -P)/$(basename "$link")"
+  else
+    TARGET_PATH_PHYS="$parent_phys/$fname"
+  fi
+fi
+
+# If the source resolves into this repo (symlink-distributed targets),
+# the .claude path *is* the jun-cc source — nothing to copy back.
+# Guard against rm -rf destroying the real files via the symlink.
+if [[ "$TARGET_PATH_PHYS" == "$SCRIPT_DIR" || "$TARGET_PATH_PHYS" == "$SCRIPT_DIR"/* ]]; then
+  echo "Path is symlinked into jun-cc; already in sync."
+  echo "  → $TARGET_PATH_PHYS"
+  exit 0
 fi
 
 # Detect type by finding /skills/ or /commands/ in the path
@@ -48,10 +74,11 @@ if [[ "$match_path" == */skills/* ]]; then
   cp -R "$skill_dir" "$dest"
   echo "  ← $skill_dir"
 
-elif [[ "$FILE_PATH" == */commands/* ]]; then
+elif [[ "$match_path" == */commands/* ]]; then
   # Extract relative command path after /commands/ (e.g. mui/triage-issue.md)
-  after_commands="${FILE_PATH#*/commands/}"
+  after_commands="${TARGET_PATH#*/commands/}"
   cmd_name="${after_commands%.md}"
+  src_file="${TARGET_PATH%%/commands/*}/commands/$after_commands"
   dest="$SCRIPT_DIR/commands/$cmd_name.md"
 
   mkdir -p "$(dirname "$dest")"
@@ -62,8 +89,8 @@ elif [[ "$FILE_PATH" == */commands/* ]]; then
     echo "New command: $cmd_name"
   fi
 
-  cp "$FILE_PATH" "$dest"
-  echo "  ← $FILE_PATH"
+  cp "$src_file" "$dest"
+  echo "  ← $src_file"
 
 else
   echo "Error: cannot detect type from path"
